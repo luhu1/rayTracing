@@ -285,6 +285,34 @@ void readfile(const char* filename)
           }
         }
 
+        // Added for HW4 commands
+
+
+        else if (cmd == "maxverts"){
+            validinput = readvals(s,1,values);
+            if (validinput) {
+                int maxverts = (int)values[0];
+            }
+        }
+
+        else if (cmd == "vertex") {
+            validinput = readvals(s,3,values);
+            if (validinput) {
+                float vx = values[0];
+                float vy = values[1];
+                float vz = values[2];
+            }
+        }
+
+        else if (cmd == "tri") {
+            validinput = readvals(s,3,values);
+            if (validinput) {
+                int t0 = (int)values[0];
+                int t1 = (int)values[2];
+                int t2 = (int)values[2];
+            }
+        }
+
         else {
           cerr << "Unknown Command: " << cmd << " Skipping \n";
         }
