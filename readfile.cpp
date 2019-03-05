@@ -295,21 +295,22 @@ void readfile(const char* filename)
             }
         }
 
-        else if (cmd == "vertex") {
+        else if (cmd == "maxverts") {
+            if (numverts == maxverts) { // No more vertex
+              cerr << "Reached Maximum Number of Vertices " << numverts << " Will ignore further vertices\n";
+            } else {
             validinput = readvals(s,3,values);
             if (validinput) {
-                float vx = values[0];
-                float vy = values[1];
-                float vz = values[2];
+                vertex = vec3(values[0], values[1], values[2])
+                vertices.push_back(vertex);
             }
         }
 
         else if (cmd == "tri") {
             validinput = readvals(s,3,values);
             if (validinput) {
-                int t0 = (int)values[0];
-                int t1 = (int)values[2];
-                int t2 = (int)values[2];
+                vec3 tri = vec3((int)values[0], (int)values[1], (int)values[2])
+                triangles.push_back(tri);
             }
         }
 
