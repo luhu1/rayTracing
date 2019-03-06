@@ -7,6 +7,8 @@
 // Since all files need access to it, we define EXTERN as either blank or
 // extern, depending on if included in the main program or not.
 
+#include <vector>
+
 #ifdef MAINPROGRAM
 #define EXTERN
 #else
@@ -39,25 +41,26 @@ enum shape {cube, sphere, teapot} ;
 EXTERN float sx, sy ; // the scale in x and y
 EXTERN float tx, ty ; // the translation in x and y
 
-// Lighting parameter array, similar to that in the fragment shader
-const int numLights = 10 ;
-EXTERN float lightposn [4*numLights] ; // Light Positions
-EXTERN float lightcolor[4*numLights] ; // Light Colors
-EXTERN float lightransf[4*numLights] ; // Lights transformed by modelview
-EXTERN int numused ;                     // How many lights are used
+
+EXTERN vector <vec3> dirlightposn; // Directional Light Positions
+EXTERN vector <vec3> dirlightcolor; // Directional Light Colors
+EXTERN vector <vec3> dirlightransf; // Directional Lights transformed by modelview
+
+EXTERN vector <vec3> ptlightposn; // Point Light Positions
+EXTERN vector <vec3> ptlightcolor; // Point Light Colors
+EXTERN vector <vec3> ptlightransf; // Point Lights transformed by modelview
 
 
 EXTERN int maxverts;
-EXTERN int numverts;
-vector <vec3> vertices;
-vector <vec3> triangles;
+EXTERN vector <vec3> vertices;
+EXTERN vector <vec3> triangles;
 
 // Materials (read from file)
 // With multiple objects, these are colors for each.
-EXTERN float ambient[4] ;
-EXTERN float diffuse[4] ;
-EXTERN float specular[4] ;
-EXTERN float emission[4] ;
+EXTERN float ambient[3] ;
+EXTERN float diffuse[3] ;
+EXTERN float specular[3] ;
+EXTERN float emission[3] ;
 EXTERN float shininess ;
 
 // For multiple objects, read from a file.

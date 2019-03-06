@@ -46,7 +46,7 @@ using namespace std;
 // here for convenience
 
 // The function below applies the appropriate transform to a 4-vector
-void matransform(stack<mat4> &transfstack, GLfloat* values)
+void matransform(stack<mat4> &transfstack, float* values)
 {
   mat4 transform = transfstack.top();
   vec4 valvec = vec4(values[0],values[1],values[2],values[3]);
@@ -62,7 +62,7 @@ void rightmultiply(const mat4 & M, stack<mat4> &transfstack)
 
 // Function to read the input data values
 // Use is optional, but should be very helpful in parsing.
-bool readvals(stringstream &s, const int numvals, GLfloat* values)
+bool readvals(stringstream &s, const int numvals, float* values)
 {
   for (int i = 0; i < numvals; i++) {
     s >> values[i];
@@ -100,23 +100,20 @@ void readfile(const char* filename)
 
         // Process the light, add it to database.
         // Lighting Command
-        if (cmd == "light") {
-          if (numused == numLights) { // No more Lights
-            cerr << "Reached Maximum Number of Lights " << numused << " Will ignore further lights\n";
-          } else {
-            validinput = readvals(s, 8, values); // Position/color for lts.
-            if (validinput) {
-
-              // YOUR CODE FOR HW 2 HERE.
-              // Note that values[0...7] shows the read in values
-              // Make use of lightposn[] and lightcolor[] arrays in variables.h
-              // Those arrays can then be used in display too.
-              std::copy(values, values+4, lightposn+4*numused);
-              std::copy(values+4, values+8, lightcolor+4*numused);
-
-              ++numused;
+        if (cmd == "directional") {
+            validinput = readvals(s, 6, values);
+            if (validinput){
+                dirlightposn.push_back(vec3(values[0], values[1], values[2]));
+                dirlightcolor.push_back(vec3(values[3], values[4], values[5]));
             }
-          }
+        }
+
+        else if (cmd == "point") {
+            validinput = readvals(s, 6, values);
+            if (validinput){
+                dirlightposn.push_back(vec3(values[0], values[1], values[2]));
+                dirlightcolor.push_back(vec3(values[3], values[4], values[5]));
+            }
         }
 
         // Material Commands
@@ -126,30 +123,30 @@ void readfile(const char* filename)
         // Note that no transforms/stacks are applied to the colors.
 
         else if (cmd == "ambient") {
-          validinput = readvals(s, 4, values); // colors
+          validinput = readvals(s, 3, values); // colors
           if (validinput) {
-            for (i = 0; i < 4; i++) {
+            for (i = 0; i < 3; i++) {
               ambient[i] = values[i];
             }
           }
         } else if (cmd == "diffuse") {
-          validinput = readvals(s, 4, values);
+          validinput = readvals(s, 3, values);
           if (validinput) {
-            for (i = 0; i < 4; i++) {
+            for (i = 0; i < 3; i++) {
               diffuse[i] = values[i];
             }
           }
         } else if (cmd == "specular") {
-          validinput = readvals(s, 4, values);
+          validinput = readvals(s, 3, values);
           if (validinput) {
-            for (i = 0; i < 4; i++) {
+            for (i = 0; i < 3; i++) {
               specular[i] = values[i];
             }
           }
         } else if (cmd == "emission") {
-          validinput = readvals(s, 4, values);
+          validinput = readvals(s, 3, values);
           if (validinput) {
-            for (i = 0; i < 4; i++) {
+            for (i = 0; i < 3; i++) {
               emission[i] = values[i];
             }
           }
@@ -285,31 +282,29 @@ void readfile(const char* filename)
           }
         }
 
-        // Added for HW4 commands
-
-
         else if (cmd == "maxverts"){
             validinput = readvals(s,1,values);
             if (validinput) {
-                int maxverts = (int)values[0];
+                maxverts = (int)values[0];
             }
         }
 
-        else if (cmd == "maxverts") {
-            if (numverts == maxverts) { // No more vertex
-              cerr << "Reached Maximum Number of Vertices " << numverts << " Will ignore further vertices\n";
+        else if (cmd == "vertex") {
+            if (vertices.size() == maxverts) { // No more vertex
+              cerr << "Reached Maximum Number of Vertices " << maxverts << " Will ignore further vertices\n";
             } else {
             validinput = readvals(s,3,values);
             if (validinput) {
-                vertex = vec3(values[0], values[1], values[2])
+                vec3 vertex = vec3(values[0], values[1], values[2]);
                 vertices.push_back(vertex);
             }
+        }
         }
 
         else if (cmd == "tri") {
             validinput = readvals(s,3,values);
             if (validinput) {
-                vec3 tri = vec3((int)values[0], (int)values[1], (int)values[2])
+                vec3 tri = vec3((int)values[0], (int)values[1], (int)values[2]);
                 triangles.push_back(tri);
             }
         }
@@ -329,9 +324,7 @@ void readfile(const char* filename)
     amount = amountinit;
     sx = sy = 1.0;  // keyboard controlled scales in x and y
     tx = ty = 0.0;  // keyboard controllled translation in x and y
-    useGlu = false; // don't use the glu perspective/lookat fns
 
-    glEnable(GL_DEPTH_TEST);
   } else {
     cerr << "Unable to Open Input Data File " << filename << "\n";
     throw 2;
