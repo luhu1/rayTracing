@@ -74,6 +74,7 @@ typedef struct sphere {
 }sphere;
 typedef struct sphere sphere;
 EXTERN vector <sphere> spheres;
+EXTERN vector <sphere*> hitSpheres;
 
 struct triangle {
     vec3 v1, v2, v3;
@@ -85,3 +86,4 @@ struct triangle {
 };
 typedef struct triangle triangle;
 EXTERN vector <triangle> triangles;
+EXTERN vector <triangle*> hitTriangles;
