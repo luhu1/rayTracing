@@ -52,6 +52,32 @@ vec3 rayThruPixel(int i, int j){
     return ray;
 }
 
+float SphereIntersection (){
+    
+    Sphere* s = new Sphere;
+    Ray* r = new Ray;
+    vec4 p0 = vec4(p0[0],p0[1],p0[2],1);
+    vec4 p1  = vec4(p1[0], p1[1], p1[2], 0);
+    vec4 c = vec4(s.center[0], s.center[1], s.center[2], 1);
+    
+    p0 = transform * p0;
+    p1 = transform * p1;
+    
+    
+    float a = glm::dot(p1,p1);
+    float b = 2 * glm::dot(p1 , (p0 - c));
+    float c = glm::dot((P0h - ch),(p0 - c)) - pow(s.r,2);
+    float discriminant = pow(b,2) - 4 * a * c;
+    if (discriminant > 0){
+        float t = -b - sqrt(b*b-4*a*c) / (2 * a);
+    }
+    return t;
+
+    float TriangleIntersection () {
+        
+        
+    }
+
 int main(int argc, char* argv[]) {
     FreeImage_Initialise();
     if (argc < 2) {
