@@ -27,14 +27,7 @@
 #include <sstream>
 #include <deque>
 #include <stack>
-#ifdef __APPLE__
-#include <OpenGL/gl3.h>
-#include <OpenGL/glext.h>
-#include <GLUT/glut.h>
-#else
-#include <GL/glew.h>
-#include <GL/glut.h>
-#endif
+
 #include "Transform.h"
 
 using namespace std;
@@ -94,7 +87,7 @@ void readfile(const char* filename)
         stringstream s(str);
         s >> cmd;
         int i;
-        GLfloat values[10]; // Position and color for light, colors for others
+        float values[10]; // Position and color for light, colors for others
         // Up to 10 params for cameras.
         bool validinput; // Validity of input
 

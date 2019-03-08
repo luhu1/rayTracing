@@ -34,6 +34,9 @@ void init(){
 
 int main(int argc, char* argv[]) {
     FreeImage_Initialise();
+    init();
+    reshape(w, h);
+
     if (argc < 2) {
     cerr << "Usage: transforms scene.test\n";
     exit(-1);
