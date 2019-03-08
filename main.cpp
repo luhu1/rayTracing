@@ -32,6 +32,11 @@ void init(){
 
 }
 
+void destroy(){
+    for(int i=0; i<objects.size(); i++)
+        free(objects[i]);
+}
+
 Ray rayThruPixel(int i, int j){
     float width = w;
     float height = h;
@@ -77,6 +82,7 @@ int main(int argc, char* argv[]) {
     }
 
 
+    destroy();
     FreeImage_DeInitialise();
     return 0;
 }

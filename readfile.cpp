@@ -155,23 +155,23 @@ void readfile(const char* filename)
         else if (cmd == "sphere") {
             validinput = readvals(s,4,values);
         if (validinput) {
-            Sphere s;
-            s.typeName = sphereType;
-            s.center = vec3(values[0], values[1], values[2]);
-            s.radius = values[3];
+            Sphere *s = new Sphere();
+            s->typeName = sphereType;
+            s->center = vec3(values[0], values[1], values[2]);
+            s->radius = values[3];
 
             // Set the object's light properties
             for (i = 0; i < 4; i++) {
-            (s.ambient)[i] = ambient[i];
-            (s.diffuse)[i] = diffuse[i];
-            (s.specular)[i] = specular[i];
-            (s.emission)[i] = emission[i];
+            (s->ambient)[i] = ambient[i];
+            (s->diffuse)[i] = diffuse[i];
+            (s->specular)[i] = specular[i];
+            (s->emission)[i] = emission[i];
             }
-            s.shininess = shininess;
+            s->shininess = shininess;
 
             // Set the object's transform
-            s.transform = transfstack.top();
-            objects.push_back(&s);
+            s->transform = transfstack.top();
+            objects.push_back(s);
             }
         }
 
@@ -264,13 +264,13 @@ void readfile(const char* filename)
         else if (cmd == "tri") {
             validinput = readvals(s,3,values);
             if (validinput) {
-                Triangle tri;
-                tri.typeName = triangleType;
-                tri.v1 = vertices[(int)values[0]];
-                tri.v2 = vertices[(int)values[1]];
-                tri.v3 = vertices[(int)values[2]];
-                tri.transform = transfstack.top();
-                objects.push_back(&tri);
+                Triangle *tri = new Triangle();
+                tri->typeName = triangleType;
+                tri->v1 = vertices[(int)values[0]];
+                tri->v2 = vertices[(int)values[1]];
+                tri->v3 = vertices[(int)values[2]];
+                tri->transform = transfstack.top();
+                objects.push_back(tri);
             }
         }
 
