@@ -97,30 +97,22 @@ void readfile(const char* filename)
         else if (cmd == "ambient") {
           validinput = readvals(s, 3, values); // colors
           if (validinput) {
-            for (i = 0; i < 3; i++) {
-              ambient[i] = values[i];
-            }
+              ambient = vec3(values[0], values[1], values[2]);
           }
         } else if (cmd == "diffuse") {
           validinput = readvals(s, 3, values);
           if (validinput) {
-            for (i = 0; i < 3; i++) {
-              diffuse[i] = values[i];
-            }
+              diffuse = vec3(values[0], values[1], values[2]);
           }
         } else if (cmd == "specular") {
           validinput = readvals(s, 3, values);
           if (validinput) {
-            for (i = 0; i < 3; i++) {
-              specular[i] = values[i];
-            }
+              specular = vec3(values[0], values[1], values[2]);
           }
         } else if (cmd == "emission") {
           validinput = readvals(s, 3, values);
           if (validinput) {
-            for (i = 0; i < 3; i++) {
-              emission[i] = values[i];
-            }
+              emission = vec3(values[0], values[1], values[2]);
           }
         } else if (cmd == "shininess") {
           validinput = readvals(s, 1, values);
@@ -161,13 +153,11 @@ void readfile(const char* filename)
             s->radius = values[3];
 
             // Set the object's light properties
-            for (i = 0; i < 4; i++) {
-            (s->ambient)[i] = ambient[i];
-            (s->diffuse)[i] = diffuse[i];
-            (s->specular)[i] = specular[i];
-            (s->emission)[i] = emission[i];
-            }
-            s->shininess = shininess;
+            s->ambient = vec3(ambient);
+            s->diffuse = vec3(diffuse);
+            s->specular = vec3(specular);
+            s->emission = vec3(emission);
+            s->shininess = vec3(shininess);
 
             // Set the object's transform
             s->transform = transfstack.top();
@@ -269,6 +259,14 @@ void readfile(const char* filename)
                 tri->v1 = vertices[(int)values[0]];
                 tri->v2 = vertices[(int)values[1]];
                 tri->v3 = vertices[(int)values[2]];
+
+                // Set the object's light properties
+                tri->ambient = vec3(ambient);
+                tri->diffuse = vec3(diffuse);
+                tri->specular = vec3(specular);
+                tri->emission = vec3(emission);
+                tri->shininess = vec3(shininess);
+
                 tri->transform = transfstack.top();
                 objects.push_back(tri);
             }

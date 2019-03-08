@@ -50,10 +50,10 @@ EXTERN vector <vec3> vertices;
 
 // Materials (read from file)
 // With multiple objects, these are colors for each.
-EXTERN float ambient[3] ;
-EXTERN float diffuse[3] ;
-EXTERN float specular[3] ;
-EXTERN float emission[3] ;
+EXTERN vec3 ambient ;
+EXTERN vec3 diffuse ;
+EXTERN vec3 specular ;
+EXTERN vec3 emission ;
 EXTERN float shininess ;
 
 

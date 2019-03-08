@@ -13,7 +13,8 @@ endif
 
 RM = /bin/rm -f
 all: transforms
-transforms: main.o Transform.o readfile.o ray.o variables.h readfile.h Transform.h ray.hpp
+transforms: main.o Transform.o readfile.o ray.o \
+	 variables.h readfile.h Transform.h ray.hpp
 	$(CC) $(CFLAGS) -o transforms main.o Transform.o readfile.o  $(INCFLAGS) $(LDFLAGS)
 main.o: main.cpp Transform.h variables.h
 	$(CC) $(CFLAGS) $(INCFLAGS) -c main.cpp
@@ -23,5 +24,7 @@ readfile.o: readfile.cpp readfile.h variables.h
 	$(CC) $(CFLAGS) $(INCFLAGS) -c readfile.cpp
 Transform.o: Transform.cpp Transform.h
 	$(CC) $(CFLAGS) $(INCFLAGS) -c Transform.cpp
+# display.o: display.cpp display.hpp
+# 	$(CC) $(CFLAGS) $(INCFLAGS) -c display.cpp
 clean:
 	$(RM) *.o transforms *.png
