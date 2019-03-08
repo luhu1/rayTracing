@@ -31,12 +31,24 @@ void init(){
 
 }
 
+vec3 rayThruPixel(int i, int j){
+    float fovy = fovy * pi / 180.0;
+    vec3 w = glm::normalize(eyeinit - center);
+    vec3 u = glm::normalize(glm::cross(upinit,w));
+    vec3 v = glm::cross(w,u);
+    float ratio = (float)width / height;
+    float fovx = ratio * fovy;
+    
+    float alpha = glm::tan((float)fovx/2) * ((float)(j- (width/2))/((float)width / 2));
+    float beta  = glm::tan((float)fovy/2) * ((float)(height/2-i)/((float)height/2));
+    
+    vec3 ray=eyeinit+ (alpha*u + beta*v -w / glm::normalize(alpha*u+beta*v-w));
+    
+    return ray;
+}
 
 int main(int argc, char* argv[]) {
     FreeImage_Initialise();
-    init();
-    reshape(w, h);
-
     if (argc < 2) {
     cerr << "Usage: transforms scene.test\n";
     exit(-1);
