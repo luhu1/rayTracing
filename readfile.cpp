@@ -173,38 +173,26 @@ void readfile(const char* filename)
         // I've left the code for loading objects in the skeleton, so
         // you can get a sense of how this works.
         // Also look at demo.txt to get a sense of why things are done this way.
-        else if (cmd == "sphere" || cmd == "cube" || cmd == "teapot") {
-          if (numobjects == maxobjects) { // No more objects
-            cerr << "Reached Maximum Number of Objects " << numobjects << " Will ignore further objects\n";
-          } else {
-            validinput = readvals(s, 1, values);
-            if (validinput) {
-              object * obj = &(objects[numobjects]);
-              obj->size = values[0];
+        else if (cmd == "sphere") {
+            validinput = readvals(s,4,values);
+        if (validinput) {
+            sphere s;
+            s.center = vec3(values[0], values[1], values[2]);
+            s.radius = values[3];
 
-              // Set the object's light properties
-              for (i = 0; i < 4; i++) {
-                (obj->ambient)[i] = ambient[i];
-                (obj->diffuse)[i] = diffuse[i];
-                (obj->specular)[i] = specular[i];
-                (obj->emission)[i] = emission[i];
-              }
-              obj->shininess = shininess;
-
-              // Set the object's transform
-              obj->transform = transfstack.top();
-
-              // Set the object's type
-              if (cmd == "sphere") {
-                obj->type = sphere;
-              } else if (cmd == "cube") {
-                obj->type = cube;
-              } else if (cmd == "teapot") {
-                obj->type = teapot;
-              }
+            // Set the object's light properties
+            for (i = 0; i < 4; i++) {
+            (s.ambient)[i] = ambient[i];
+            (s.diffuse)[i] = diffuse[i];
+            (s.specular)[i] = specular[i];
+            (s.emission)[i] = emission[i];
             }
-            ++numobjects;
-          }
+            s.shininess = shininess;
+
+            // Set the object's transform
+            s.transform = transfstack.top();
+            spheres.push_back(s);
+            }
         }
 
         else if (cmd == "translate") {
@@ -288,8 +276,7 @@ void readfile(const char* filename)
             } else {
             validinput = readvals(s,3,values);
             if (validinput) {
-                vec3 vertex = vec3(values[0], values[1], values[2]);
-                vertices.push_back(vertex);
+                vertices.push_back(vec3(values[0], values[1], values[2]));
             }
         }
         }
@@ -297,7 +284,10 @@ void readfile(const char* filename)
         else if (cmd == "tri") {
             validinput = readvals(s,3,values);
             if (validinput) {
-                vec3 tri = vec3((int)values[0], (int)values[1], (int)values[2]);
+                triangle tri;
+                tri.v1 = vertices[(int)values[0]];
+                tri.v2 = vertices[(int)values[1]];
+                tri.v3 = vertices[(int)values[2]];
                 triangles.push_back(tri);
             }
         }

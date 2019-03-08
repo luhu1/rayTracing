@@ -37,7 +37,6 @@ EXTERN float fovy ;
 
 EXTERN mat4 projection, modelview; // The mvp matrices
 static enum {view, translate, scale} transop ; // which operation to transform
-enum shape {cube, sphere, teapot} ;
 EXTERN float sx, sy ; // the scale in x and y
 EXTERN float tx, ty ; // the translation in x and y
 
@@ -53,7 +52,7 @@ EXTERN vector <vec3> ptlightransf; // Point Lights transformed by modelview
 
 EXTERN int maxverts;
 EXTERN vector <vec3> vertices;
-EXTERN vector <vec3> triangles;
+// EXTERN vector <vec3> triangles;
 
 // Materials (read from file)
 // With multiple objects, these are colors for each.
@@ -63,16 +62,26 @@ EXTERN float specular[3] ;
 EXTERN float emission[3] ;
 EXTERN float shininess ;
 
-// For multiple objects, read from a file.
-const int maxobjects = 10 ;
-EXTERN int numobjects ;
-EXTERN struct object {
-  shape type ;
-  float size ;
-  float ambient[4] ;
-  float diffuse[4] ;
-  float specular[4] ;
-  float emission[4] ;
-  float shininess ;
-  mat4 transform ;
-} objects[maxobjects] ;
+typedef struct sphere {
+    vec3 center;
+    float radius ;
+    float ambient[4] ;
+    float diffuse[4] ;
+    float specular[4] ;
+    float emission[4] ;
+    float shininess ;
+    mat4 transform ;
+}sphere;
+typedef struct sphere sphere;
+EXTERN vector <sphere> spheres;
+
+struct triangle {
+    vec3 v1, v2, v3;
+    float ambient[4] ;
+    float diffuse[4] ;
+    float specular[4] ;
+    float emission[4] ;
+    float shininess ;
+};
+typedef struct triangle triangle;
+EXTERN vector <triangle> triangles;
