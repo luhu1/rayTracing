@@ -14,6 +14,7 @@ using namespace std;
 #define MAINPROGRAM
 #include "variables.h"
 #include "readfile.h" // prototypes for readfile.cpp
+#include "ray.hpp"
 void display(void);  // prototype for display function.
 
 // Reshapes the window
@@ -31,15 +32,14 @@ void init(){
 
 }
 
-vec3 rayThruPixel(int i, int j){
+Ray rayThruPixel(int i, int j){
     float width = w;
     float height = h;
-    
-    float fovy = fovy * pi / 180.0;
-    vec3 w = glm::normalize(eyeinit - center);
-    vec3 u = glm::normalize(glm::cross(upinit,w));
-    vec3 v = glm::cross(w,u); // upinit
 
+    float fovy = fovy * pi / 180.0;
+    vec3 w = glm::normalize(eye - center);
+    vec3 u = glm::normalize(glm::cross(up, w));
+    vec3 v = up;
 
     float ratio = (float)width / height;
     float fovx = ratio * fovy;
@@ -47,9 +47,15 @@ vec3 rayThruPixel(int i, int j){
     float alpha = glm::tan((float)fovx/2) * ((float)(j- (width/2))/((float)width / 2));
     float beta  = glm::tan((float)fovy/2) * ((float)(height/2-i)/((float)height/2));
 
-    vec3 ray=eyeinit+ (alpha*u + beta*v -w / glm::normalize(alpha*u+beta*v-w));
+    vec3 direction = alpha*u + beta*v -w / glm::normalize(alpha*u+beta*v-w);
+    Ray ray = Ray(eye, direction);
 
     return ray;
+}
+
+
+vec3 FindColor (){
+    return vec3(0, 0, 0);
 }
 
 int main(int argc, char* argv[]) {
@@ -63,6 +69,12 @@ int main(int argc, char* argv[]) {
     readfile(argv[1]);
     reshape(w, h);
 
+    for (int i=0; i<h; i++){
+        for (int j=0; j<w; j++){
+            Ray ray = rayThruPixel(i, j);
+
+        }
+    }
 
 
     FreeImage_DeInitialise();

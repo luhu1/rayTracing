@@ -1,13 +1,8 @@
-/*****************************************************************************/
-/* This is the program skeleton for homework 2 in CSE167 by Ravi Ramamoorthi */
-/* Extends HW 1 to deal with shading, more transforms and multiple objects   */
-/*****************************************************************************/
-
-// This is the basic include file for the global variables in the program.
-// Since all files need access to it, we define EXTERN as either blank or
-// extern, depending on if included in the main program or not.
+#ifndef VARIABLES_H
+#define VARIABLES_H
 
 #include <vector>
+#include "object.hpp"
 
 #ifdef MAINPROGRAM
 #define EXTERN
@@ -52,7 +47,6 @@ EXTERN vector <vec3> ptlightransf; // Point Lights transformed by modelview
 
 EXTERN int maxverts;
 EXTERN vector <vec3> vertices;
-// EXTERN vector <vec3> triangles;
 
 // Materials (read from file)
 // With multiple objects, these are colors for each.
@@ -62,28 +56,9 @@ EXTERN float specular[3] ;
 EXTERN float emission[3] ;
 EXTERN float shininess ;
 
-typedef struct sphere {
-    vec3 center;
-    float radius ;
-    float ambient[4] ;
-    float diffuse[4] ;
-    float specular[4] ;
-    float emission[4] ;
-    float shininess ;
-    mat4 transform ;
-}sphere;
-typedef struct sphere sphere;
-EXTERN vector <sphere> spheres;
-EXTERN vector <sphere*> hitSpheres;
 
-struct triangle {
-    vec3 v1, v2, v3;
-    float ambient[4] ;
-    float diffuse[4] ;
-    float specular[4] ;
-    float emission[4] ;
-    float shininess ;
-};
-typedef struct triangle triangle;
-EXTERN vector <triangle> triangles;
-EXTERN vector <triangle*> hitTriangles;
+EXTERN vector <Sphere> spheres;
+EXTERN vector <Triangle> triangles;
+EXTERN vector <Object*> hitObjects;
+
+#endif
