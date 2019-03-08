@@ -3,23 +3,6 @@
 /* Extends HW 1 to deal with shading, more transforms and multiple objects   */
 /*****************************************************************************/
 
-/*****************************************************************************/
-// This file is readfile.cpp.  It includes helper functions for matrix
-// transformations for a stack (matransform) and to rightmultiply the
-// top of a stack.  These functions are given to aid in setting up the
-// transformations properly, and to use glm functions in the right way.
-// Their use is optional in your program.
-
-
-// The functions readvals and readfile do basic parsing.  You can of course
-// rewrite the parser as you wish, but we think this basic form might be
-// useful to you.  It is a very simple parser.
-
-// Please fill in parts that say YOUR CODE FOR HW 2 HERE.
-// Read the other parts to get a context of what is going on.
-
-/*****************************************************************************/
-
 // Basic includes to get this file to work.
 #include <iostream>
 #include <string>
@@ -34,9 +17,6 @@ using namespace std;
 #include "variables.h"
 #include "readfile.h"
 
-
-// You may not need to use the following two functions, but it is provided
-// here for convenience
 
 // The function below applies the appropriate transform to a 4-vector
 void matransform(stack<mat4> &transfstack, float* values)
@@ -54,7 +34,6 @@ void rightmultiply(const mat4 & M, stack<mat4> &transfstack)
 }
 
 // Function to read the input data values
-// Use is optional, but should be very helpful in parsing.
 bool readvals(stringstream &s, const int numvals, float* values)
 {
   for (int i = 0; i < numvals; i++) {
@@ -118,30 +97,22 @@ void readfile(const char* filename)
         else if (cmd == "ambient") {
           validinput = readvals(s, 3, values); // colors
           if (validinput) {
-            for (i = 0; i < 3; i++) {
-              ambient[i] = values[i];
-            }
+              ambient = vec3(values[0], values[1], values[2]);
           }
         } else if (cmd == "diffuse") {
           validinput = readvals(s, 3, values);
           if (validinput) {
-            for (i = 0; i < 3; i++) {
-              diffuse[i] = values[i];
-            }
+              diffuse = vec3(values[0], values[1], values[2]);
           }
         } else if (cmd == "specular") {
           validinput = readvals(s, 3, values);
           if (validinput) {
-            for (i = 0; i < 3; i++) {
-              specular[i] = values[i];
-            }
+              specular = vec3(values[0], values[1], values[2]);
           }
         } else if (cmd == "emission") {
           validinput = readvals(s, 3, values);
           if (validinput) {
-            for (i = 0; i < 3; i++) {
-              emission[i] = values[i];
-            }
+              emission = vec3(values[0], values[1], values[2]);
           }
         } else if (cmd == "shininess") {
           validinput = readvals(s, 1, values);
@@ -176,22 +147,21 @@ void readfile(const char* filename)
         else if (cmd == "sphere") {
             validinput = readvals(s,4,values);
         if (validinput) {
-            sphere s;
-            s.center = vec3(values[0], values[1], values[2]);
-            s.radius = values[3];
+            Sphere *s = new Sphere();
+            s->typeName = sphereType;
+            s->center = vec3(values[0], values[1], values[2]);
+            s->radius = values[3];
 
             // Set the object's light properties
-            for (i = 0; i < 4; i++) {
-            (s.ambient)[i] = ambient[i];
-            (s.diffuse)[i] = diffuse[i];
-            (s.specular)[i] = specular[i];
-            (s.emission)[i] = emission[i];
-            }
-            s.shininess = shininess;
+            s->ambient = vec3(ambient);
+            s->diffuse = vec3(diffuse);
+            s->specular = vec3(specular);
+            s->emission = vec3(emission);
+            s->shininess = vec3(shininess);
 
             // Set the object's transform
-            s.transform = transfstack.top();
-            spheres.push_back(s);
+            s->transform = transfstack.top();
+            objects.push_back(s);
             }
         }
 
@@ -284,11 +254,21 @@ void readfile(const char* filename)
         else if (cmd == "tri") {
             validinput = readvals(s,3,values);
             if (validinput) {
-                triangle tri;
-                tri.v1 = vertices[(int)values[0]];
-                tri.v2 = vertices[(int)values[1]];
-                tri.v3 = vertices[(int)values[2]];
-                triangles.push_back(tri);
+                Triangle *tri = new Triangle();
+                tri->typeName = triangleType;
+                tri->v1 = vertices[(int)values[0]];
+                tri->v2 = vertices[(int)values[1]];
+                tri->v3 = vertices[(int)values[2]];
+
+                // Set the object's light properties
+                tri->ambient = vec3(ambient);
+                tri->diffuse = vec3(diffuse);
+                tri->specular = vec3(specular);
+                tri->emission = vec3(emission);
+                tri->shininess = vec3(shininess);
+
+                tri->transform = transfstack.top();
+                objects.push_back(tri);
             }
         }
 
