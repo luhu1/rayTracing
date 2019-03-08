@@ -64,28 +64,70 @@ vec3 FindColor (){
 }
 
 
-float SphereIntersection (vec3 p0, vec3 p1){
+void SphereIntersection (Ray ray, Sphere *s, Hit *h){
     
-    Sphere* s = new Sphere;
     float t=0;
+    /*
     vec4 P0 = vec4(p0[0],p0[1],p0[2],1);
     vec4 P1  = vec4(p1[0], p1[1], p1[2], 1);
-    vec4 center = vec4(s->center[0], s->center[1], s->center[2], 1);
+     */
+    vec3 center = s->center;
     
-    P0 = s->transform * P0;
-    P1 = s->transform * P1;
+   // P0 = s->transform * P0;
+    //P1 = s->transform * P1;
     
     
-    float a = glm::dot(P1,P1);
-    float b = 2 * glm::dot(P1 , (P0 - center));
-    float c = glm::dot((P0 - center),(P0 - center)) - pow(s->radius,2);
+    float a = glm::dot(ray.p1,ray.p1);
+    float b = 2 * glm::dot(ray.p1 , (ray.p0 - center));
+    float c = glm::dot((ray.p0 - center),(ray.p0 - center)) - pow(s->radius,2);
     float discriminant = pow(b,2) - 4 * a * c;
     if (discriminant > 0){
         float t = -b - sqrt(b*b-4*a*c) / (2 * a);
+        vec3 point = ray.p0+ray.p1*t;
+        vec3 n = (point-center)/glm::normalize(point-center);
+        h = new Hit();
+        h->t=t;
+        h->normal=n;
+        Sphere *temp = s;
+        h->obj= temp;
+        h->p=point;
     }
-    return t;
 }
- 
+
+void TriangleIntersection(Ray ray, Triangle *tri, Hit *h) {
+    
+    /*
+    vec3 a = vec3(t->v1[0]/t->v1[3],t->v1[1]/t->v1[3],t->v1[2]/t->v1[3]);
+    vec3 b = vec3(t->v2[0]/t->v2[3],t->v2[1]/t->v2[3],t->v2[2]/t->v2[3]);
+    vec3 c = vec3(t->v3[0]/t->v3[3],t->v3[1]/t->v3[3],t->v3[2]/t->v3[3]);
+    */
+    vec3 v1 = tri->v1;
+    vec3 v2 = tri->v2;
+    vec3 v3 = tri->v3;
+    
+    vec3 n= glm::cross((v3-v1),(v2-v1))/glm::normalize(glm::cross((v3-v1),(v2-v1)));
+    float t = (glm::dot(v1,n) - glm::dot(ray.p0,n)) / (glm::dot(ray.p1,n));
+    vec3 point = ray.p0 + ray.p1*t;
+    float beta, gamma;
+    float a1,b1,c1,a2,b2,c2;
+    a1=v2[0]-v1[0];
+    b1=v3[0]-v1[0];
+    c1=point[0]-v1[0];
+    a2=v2[1]-v1[1];
+    b2=v3[1]-v1[1];
+    c2=point[1]-v1[1];
+    gamma = (c2*a1-a2*c1)/(b2*a1-a2*b1);
+    beta = c1/a1 - (b1/a1)*gamma;
+    if (gamma+beta <1 && gamma<=1 && 0<=gamma && 0<=beta && beta<=1){
+        h = new Hit();
+        h->t=t;
+        h->normal=n;
+        Triangle *temp = tri;
+        h->obj= temp;
+        h->p=point;
+    }
+    
+}
 
 int main(int argc, char* argv[]) {
     FreeImage_Initialise();
