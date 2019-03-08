@@ -57,8 +57,7 @@ EXTERN float emission[3] ;
 EXTERN float shininess ;
 
 
-EXTERN vector <Sphere> spheres;
-EXTERN vector <Triangle> triangles;
+EXTERN vector <Object*> objects;
 EXTERN vector <Object*> hitObjects;
 
 #endif

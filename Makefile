@@ -13,12 +13,12 @@ endif
 
 RM = /bin/rm -f
 all: transforms
-transforms: main.o Transform.o readfile.o RayTracing.o variables.h readfile.h Transform.h ray.hpp
+transforms: main.o Transform.o readfile.o ray.o variables.h readfile.h Transform.h ray.hpp
 	$(CC) $(CFLAGS) -o transforms main.o Transform.o readfile.o  $(INCFLAGS) $(LDFLAGS)
 main.o: main.cpp Transform.h variables.h
 	$(CC) $(CFLAGS) $(INCFLAGS) -c main.cpp
-RayTracing.o: RayTracing.cpp ray.hpp
-	$(CC) $(CFLAGS) $(INCFLAGS) -c RayTracing.cpp
+ray.o: ray.cpp ray.hpp
+	$(CC) $(CFLAGS) $(INCFLAGS) -c ray.cpp
 readfile.o: readfile.cpp readfile.h variables.h
 	$(CC) $(CFLAGS) $(INCFLAGS) -c readfile.cpp
 Transform.o: Transform.cpp Transform.h

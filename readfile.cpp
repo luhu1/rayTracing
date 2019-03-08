@@ -171,7 +171,7 @@ void readfile(const char* filename)
 
             // Set the object's transform
             s.transform = transfstack.top();
-            spheres.push_back(s);
+            objects.push_back(&s);
             }
         }
 
@@ -270,7 +270,7 @@ void readfile(const char* filename)
                 tri.v2 = vertices[(int)values[1]];
                 tri.v3 = vertices[(int)values[2]];
                 tri.transform = transfstack.top();
-                triangles.push_back(tri);
+                objects.push_back(&tri);
             }
         }
 
