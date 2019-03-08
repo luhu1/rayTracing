@@ -64,32 +64,28 @@ vec3 FindColor (){
 }
 
 
-float SphereIntersection (){
+float SphereIntersection (vec3 p0, vec3 p1){
     
     Sphere* s = new Sphere;
-    Ray* r = new Ray;
-    vec4 p0 = vec4(p0[0],p0[1],p0[2],1);
-    vec4 p1  = vec4(p1[0], p1[1], p1[2], 0);
-    vec4 c = vec4(s.center[0], s.center[1], s.center[2], 1);
+    float t=0;
+    vec4 P0 = vec4(p0[0],p0[1],p0[2],1);
+    vec4 P1  = vec4(p1[0], p1[1], p1[2], 1);
+    vec4 center = vec4(s->center[0], s->center[1], s->center[2], 1);
     
-    p0 = transform * p0;
-    p1 = transform * p1;
+    P0 = s->transform * P0;
+    P1 = s->transform * P1;
     
     
-    float a = glm::dot(p1,p1);
-    float b = 2 * glm::dot(p1 , (p0 - c));
-    float c = glm::dot((P0h - ch),(p0 - c)) - pow(s.r,2);
+    float a = glm::dot(P1,P1);
+    float b = 2 * glm::dot(P1 , (P0 - center));
+    float c = glm::dot((P0 - center),(P0 - center)) - pow(s->radius,2);
     float discriminant = pow(b,2) - 4 * a * c;
     if (discriminant > 0){
         float t = -b - sqrt(b*b-4*a*c) / (2 * a);
     }
     return t;
-
-    float TriangleIntersection () {
-        
-        
-    }
-
+}
+ 
 
 int main(int argc, char* argv[]) {
     FreeImage_Initialise();
