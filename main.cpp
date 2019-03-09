@@ -47,13 +47,12 @@ Ray rayThruPixel(int i, int j){
     vec3 u = glm::normalize(glm::cross(up, w));
     vec3 v = glm::cross(w, u);
 
-    float ratio = (float)width / height;
+    float ratio = (float) width / height;
     float fovx = ratio * fovy;
 
-    float alpha = glm::tan((float)fovx/2) * ((float)(j- (width/2))/((float)width / 2));
+    float alpha = glm::tan((float)fovx/2) * ((float)(j-(width/2))/((float)width / 2));
     float beta  = glm::tan((float)fovy/2) * ((float)(height/2-i)/((float)height/2));
 
-    // vec3 direction = alpha*u + beta*v -w / glm::normalize(alpha*u+beta*v-w);
     vec3 direction = glm::normalize(alpha*u+beta*v-w);
     Ray ray = Ray(eye, direction);
 
@@ -76,16 +75,7 @@ vec3 FindColor (Hit *hit){
 void SphereIntersection (Ray ray, Sphere *s, Hit *&h){
 
     float t=0;
-    /*
-    vec4 P0 = vec4(p0[0],p0[1],p0[2],1);
-    vec4 P1  = vec4(p1[0], p1[1], p1[2], 1);
-     */
     vec3 center = s->center;
-
-   // P0 = s->transform * P0;
-    //P1 = s->transform * P1;
-
-
     float a = glm::dot(ray.p1,ray.p1);
     float b = 2 * glm::dot(ray.p1 , (ray.p0 - center));
     float c = glm::dot((ray.p0 - center),(ray.p0 - center)) - pow(s->radius,2);
@@ -93,7 +83,7 @@ void SphereIntersection (Ray ray, Sphere *s, Hit *&h){
     if (discriminant > 0){
         float t = -b - sqrt(b*b-4*a*c) / (2 * a);
         vec3 point = ray.p0+ray.p1*t;
-        vec3 n = (point-center)/glm::normalize(point-center);
+        vec3 n = glm::normalize(point-center);
         h = new Hit();
         h->t = t;
         h->normal = n;
@@ -104,11 +94,6 @@ void SphereIntersection (Ray ray, Sphere *s, Hit *&h){
 
 void TriangleIntersection(Ray ray, Triangle *tri, Hit *&h) {
 
-    /*
-    vec3 a = vec3(t->v1[0]/t->v1[3],t->v1[1]/t->v1[3],t->v1[2]/t->v1[3]);
-    vec3 b = vec3(t->v2[0]/t->v2[3],t->v2[1]/t->v2[3],t->v2[2]/t->v2[3]);
-    vec3 c = vec3(t->v3[0]/t->v3[3],t->v3[1]/t->v3[3],t->v3[2]/t->v3[3]);
-    */
     vec3 v1 = tri->v1;
     vec3 v2 = tri->v2;
     vec3 v3 = tri->v3;
@@ -126,7 +111,8 @@ void TriangleIntersection(Ray ray, Triangle *tri, Hit *&h) {
     c2=point[1]-v1[1];
     gamma = (c2*a1-a2*c1)/(b2*a1-a2*b1);
     beta = c1/a1 - (b1/a1)*gamma;
-    if (gamma+beta <=1 && 0<=gamma && gamma<=1 && 0<=beta && beta<=1){
+    
+    if ((gamma+beta) <=1 && 0<=gamma && gamma<=1 && 0<=beta && beta<=1){
         h = new Hit();
         h->t = t;
         h->normal = n;
@@ -158,7 +144,7 @@ Hit * Intersect(Ray ray){
     Hit *h = hitList[0];
     float minDist = calDistance(eye, hitList[0]->p);
 
-    for (int i=1; i<hitList.size(); i++){
+    for (int i=1; i< hitList.size(); i++){
         float dist = calDistance(eye, hitList[i]->p);
         if (dist < minDist){
             minDist = dist;
