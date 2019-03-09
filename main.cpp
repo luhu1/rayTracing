@@ -37,6 +37,7 @@ void destroy(){
         free(objects[i]);
 }
 
+
 Ray rayThruPixel(int i, int j){
     float width = w;
     float height = h;
@@ -44,7 +45,7 @@ Ray rayThruPixel(int i, int j){
     float fovy = fovy * pi / 180.0;
     vec3 w = glm::normalize(eye - center);
     vec3 u = glm::normalize(glm::cross(up, w));
-    vec3 v = up;
+    vec3 v = glm::cross(w, u);
 
     float ratio = (float)width / height;
     float fovx = ratio * fovy;
@@ -52,31 +53,39 @@ Ray rayThruPixel(int i, int j){
     float alpha = glm::tan((float)fovx/2) * ((float)(j- (width/2))/((float)width / 2));
     float beta  = glm::tan((float)fovy/2) * ((float)(height/2-i)/((float)height/2));
 
-    vec3 direction = alpha*u + beta*v -w / glm::normalize(alpha*u+beta*v-w);
+    // vec3 direction = alpha*u + beta*v -w / glm::normalize(alpha*u+beta*v-w);
+    vec3 direction = glm::normalize(alpha*u+beta*v-w);
     Ray ray = Ray(eye, direction);
 
     return ray;
 }
 
 
-vec3 FindColor (){
-    return vec3(0, 0, 0);
+vec3 FindColor (Hit *hit){
+    if (hit == NULL)
+        return vec3(0, 0, 0);
+    else if (hit->obj->typeName == sphereType)
+        return vec3(1.0, 0, 0);
+    else if (hit->obj->typeName == triangleType)
+        return vec3(0, 1.0, 0);
+    else
+        return vec3(0, 0, 0);
 }
 
 
-void SphereIntersection (Ray ray, Sphere *s, Hit *h){
-    
+void SphereIntersection (Ray ray, Sphere *s, Hit *&h){
+
     float t=0;
     /*
     vec4 P0 = vec4(p0[0],p0[1],p0[2],1);
     vec4 P1  = vec4(p1[0], p1[1], p1[2], 1);
      */
     vec3 center = s->center;
-    
+
    // P0 = s->transform * P0;
     //P1 = s->transform * P1;
-    
-    
+
+
     float a = glm::dot(ray.p1,ray.p1);
     float b = 2 * glm::dot(ray.p1 , (ray.p0 - center));
     float c = glm::dot((ray.p0 - center),(ray.p0 - center)) - pow(s->radius,2);
@@ -86,16 +95,15 @@ void SphereIntersection (Ray ray, Sphere *s, Hit *h){
         vec3 point = ray.p0+ray.p1*t;
         vec3 n = (point-center)/glm::normalize(point-center);
         h = new Hit();
-        h->t=t;
-        h->normal=n;
-        Sphere *temp = s;
-        h->obj= temp;
-        h->p=point;
+        h->t = t;
+        h->normal = n;
+        h->obj = s;
+        h->p = point;
     }
 }
 
-void TriangleIntersection(Ray ray, Triangle *tri, Hit *h) {
-    
+void TriangleIntersection(Ray ray, Triangle *tri, Hit *&h) {
+
     /*
     vec3 a = vec3(t->v1[0]/t->v1[3],t->v1[1]/t->v1[3],t->v1[2]/t->v1[3]);
     vec3 b = vec3(t->v2[0]/t->v2[3],t->v2[1]/t->v2[3],t->v2[2]/t->v2[3]);
@@ -104,8 +112,8 @@ void TriangleIntersection(Ray ray, Triangle *tri, Hit *h) {
     vec3 v1 = tri->v1;
     vec3 v2 = tri->v2;
     vec3 v3 = tri->v3;
-    
-    vec3 n= glm::cross((v3-v1),(v2-v1))/glm::normalize(glm::cross((v3-v1),(v2-v1)));
+
+    vec3 n= glm::normalize(glm::cross((v3-v1),(v2-v1)));
     float t = (glm::dot(v1,n) - glm::dot(ray.p0,n)) / (glm::dot(ray.p1,n));
     vec3 point = ray.p0 + ray.p1*t;
     float beta, gamma;
@@ -118,16 +126,64 @@ void TriangleIntersection(Ray ray, Triangle *tri, Hit *h) {
     c2=point[1]-v1[1];
     gamma = (c2*a1-a2*c1)/(b2*a1-a2*b1);
     beta = c1/a1 - (b1/a1)*gamma;
-    if (gamma+beta <1 && gamma<=1 && 0<=gamma && 0<=beta && beta<=1){
+    if (gamma+beta <=1 && 0<=gamma && gamma<=1 && 0<=beta && beta<=1){
         h = new Hit();
-        h->t=t;
-        h->normal=n;
-        Triangle *temp = tri;
-        h->obj= temp;
-        h->p=point;
+        h->t = t;
+        h->normal = n;
+        h->obj = tri;
+        h->p = point;
     }
-    
 }
+
+
+Hit * Intersect(Ray ray){
+    hitList.clear();
+
+    for (int i=0; i<objects.size(); i++){
+        Hit *h = NULL;
+        if (objects[i]->typeName == sphereType){
+            SphereIntersection (ray, (Sphere*)objects[i], h);
+        }
+        else if (objects[i]->typeName == triangleType){
+            TriangleIntersection(ray, (Triangle*)objects[i], h);
+        }
+        if (h != NULL)
+            hitList.push_back(h);
+    }
+
+    if (hitList.empty())
+        return NULL;
+
+    // find the closest Intersected object
+    Hit *h = hitList[0];
+    float minDist = calDistance(eye, hitList[0]->p);
+
+    for (int i=1; i<hitList.size(); i++){
+        float dist = calDistance(eye, hitList[i]->p);
+        if (dist < minDist){
+            minDist = dist;
+            h = hitList[i];
+        }
+    }
+    return h;
+}
+
+void saveScreenshot(string fname, vec3 *pix) {
+  BYTE *pixels = new BYTE[3*w*h];
+  for(int i=0; i<w*h; i++){
+      pixels[i*3] = int(pix[i].x * 255.99);
+      pixels[i*3+1] = int(pix[i].y * 255.99);
+      pixels[i*3+2] = int(pix[i].z * 255.99);
+  }
+
+  FIBITMAP *img = FreeImage_ConvertFromRawBits(pixels, w, h, w * 3, 24, 0xFF0000, 0x00FF00, 0x0000FF, false);
+
+  std::cout << "Saving screenshot: " << fname << "\n";
+
+  FreeImage_Save(FIF_PNG, img, fname.c_str(), 0);
+  delete[] pixels;
+}
+
 
 int main(int argc, char* argv[]) {
     FreeImage_Initialise();
@@ -140,13 +196,17 @@ int main(int argc, char* argv[]) {
     readfile(argv[1]);
     reshape(w, h);
 
+    vec3 *pixels = new vec3[w*h];
+
     for (int i=0; i<h; i++){
         for (int j=0; j<w; j++){
             Ray ray = rayThruPixel(i, j);
-            hitObjects.clear();
+            Hit *hit = Intersect(ray);
+            vec3 color = FindColor (hit);
+            pixels[i*h+j] = color;
         }
     }
-
+    saveScreenshot("scene1", pixels);
 
     destroy();
     FreeImage_DeInitialise();

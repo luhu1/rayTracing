@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "object.hpp"
+#include "ray.hpp"
 
 #ifdef MAINPROGRAM
 #define EXTERN
@@ -58,6 +59,6 @@ EXTERN float shininess ;
 
 
 EXTERN vector <Object*> objects;
-EXTERN vector <Object*> hitObjects;
+EXTERN vector <Hit*> hitList;
 
 #endif
