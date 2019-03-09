@@ -65,9 +65,9 @@ vec3 FindColor (Hit *hit){
     if (hit == NULL)
         return vec3(0, 0, 0);
     else if (hit->obj->typeName == sphereType)
-        return vec3(1.0, 0, 0);
-    else if (hit->obj->typeName == triangleType)
         return vec3(0, 1.0, 0);
+    else if (hit->obj->typeName == triangleType)
+        return vec3(0, 0, 1.0);
     else
         return vec3(0, 0, 0);
 }
@@ -177,7 +177,7 @@ void saveScreenshot(string fname, vec3 *pix) {
   }
 
   FIBITMAP *img = FreeImage_ConvertFromRawBits(pixels, w, h, w * 3, 24, 0xFF0000, 0x00FF00, 0x0000FF, false);
-
+  fname.append(".png");
   std::cout << "Saving screenshot: " << fname << "\n";
 
   FreeImage_Save(FIF_PNG, img, fname.c_str(), 0);
@@ -206,7 +206,7 @@ int main(int argc, char* argv[]) {
             pixels[i*h+j] = color;
         }
     }
-    saveScreenshot("scene1", pixels);
+    saveScreenshot(argv[1], pixels);
 
     destroy();
     FreeImage_DeInitialise();
