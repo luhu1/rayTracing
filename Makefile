@@ -15,8 +15,8 @@ RM = /bin/rm -f
 all: transforms
 transforms: main.o Transform.o readfile.o ray.o \
 	 variables.h readfile.h Transform.h ray.hpp
-	$(CC) $(CFLAGS) -o transforms main.o Transform.o readfile.o  $(INCFLAGS) $(LDFLAGS)
-main.o: main.cpp Transform.h variables.h
+	$(CC) $(CFLAGS) -o transforms main.o Transform.o readfile.o ray.o  $(INCFLAGS) $(LDFLAGS)
+main.o: main.cpp Transform.h variables.h ray.hpp
 	$(CC) $(CFLAGS) $(INCFLAGS) -c main.cpp
 ray.o: ray.cpp ray.hpp
 	$(CC) $(CFLAGS) $(INCFLAGS) -c ray.cpp
