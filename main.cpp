@@ -18,12 +18,8 @@ using namespace std;
 void display(void);  // prototype for display function.
 
 // Reshapes the window
-void reshape(int width, int height){
-    w = width;
-    h = height;
-
-    float aspect = (float) w / (float) h, zNear = 0.1, zFar = 99.0 ;
-    // I am changing the projection matrix to fit with the new window aspect ratio
+void reshape(){
+    float aspect = (float) width / (float) height, zNear = 0.1, zFar = 99.0 ;
     projection = Transform::perspective(fovy, aspect, zNear, zFar) ;
 }
 
@@ -39,19 +35,16 @@ void destroy(){
 
 
 Ray rayThruPixel(int i, int j){
-    float width = w;
-    float height = h;
-
-    float fovy = fovy * pi / 180.0;
+    float fovyR = glm::radians(fovy);
     vec3 w = glm::normalize(eye - center);
     vec3 u = glm::normalize(glm::cross(up, w));
-    vec3 v = glm::cross(w, u);
+    vec3 v = glm::normalize(glm::cross(w, u));
 
     float ratio = (float) width / height;
-    float fovx = ratio * fovy;
+    float fovxR = ratio * fovyR;
 
-    float alpha = glm::tan((float)fovx/2) * ((float)(j-(width/2))/((float)width / 2));
-    float beta  = glm::tan((float)fovy/2) * ((float)(height/2-i)/((float)height/2));
+    float alpha = glm::tan((float)fovxR/2) * ((j-((float)width/2))/((float)width / 2));
+    float beta  = glm::tan((float)fovyR/2) * (((float)height/2-i)/((float)height/2));
 
     vec3 direction = glm::normalize(alpha*u+beta*v-w);
     Ray ray = Ray(eye, direction);
@@ -64,9 +57,9 @@ vec3 FindColor (Hit *hit){
     if (hit == NULL)
         return vec3(0, 0, 0);
     else if (hit->obj->typeName == sphereType)
-        return vec3(0, 1.0, 0);
+        return vec3(0, 255, 0);
     else if (hit->obj->typeName == triangleType)
-        return vec3(0, 0, 1.0);
+        return vec3(0, 0, 255);
     else
         return vec3(0, 0, 0);
 }
@@ -74,7 +67,6 @@ vec3 FindColor (Hit *hit){
 
 void SphereIntersection (Ray ray, Sphere *s, Hit *&h){
 
-    float t=0;
     vec3 center = s->center;
     float a = glm::dot(ray.p1,ray.p1);
     float b = 2 * glm::dot(ray.p1 , (ray.p0 - center));
@@ -82,6 +74,8 @@ void SphereIntersection (Ray ray, Sphere *s, Hit *&h){
     float discriminant = pow(b,2) - 4 * a * c;
     if (discriminant > 0){
         float t = -b - sqrt(b*b-4*a*c) / (2 * a);
+        if (t <= 0)
+            return;
         vec3 point = ray.p0+ray.p1*t;
         vec3 n = glm::normalize(point-center);
         h = new Hit();
@@ -111,8 +105,8 @@ void TriangleIntersection(Ray ray, Triangle *tri, Hit *&h) {
     c2=point[1]-v1[1];
     gamma = (c2*a1-a2*c1)/(b2*a1-a2*b1);
     beta = c1/a1 - (b1/a1)*gamma;
-    
-    if ((gamma+beta) <=1 && 0<=gamma && gamma<=1 && 0<=beta && beta<=1){
+
+    if ((gamma+beta) <=1 && 0<=gamma && gamma<=1 && 0<=beta && beta<=1 && t > 0){
         h = new Hit();
         h->t = t;
         h->normal = n;
@@ -155,14 +149,14 @@ Hit * Intersect(Ray ray){
 }
 
 void saveScreenshot(string fname, vec3 *pix) {
-  BYTE *pixels = new BYTE[3*w*h];
-  for(int i=0; i<w*h; i++){
-      pixels[i*3] = int(pix[i].x * 255.99);
-      pixels[i*3+1] = int(pix[i].y * 255.99);
-      pixels[i*3+2] = int(pix[i].z * 255.99);
+  BYTE *pixels = new BYTE[3*width*height];
+  for(int i=0; i<width*height; i++){
+      pixels[i*3] = (int)pix[i].x;
+      pixels[i*3+1] = (int)pix[i].y;
+      pixels[i*3+2] = (int)pix[i].z;
   }
 
-  FIBITMAP *img = FreeImage_ConvertFromRawBits(pixels, w, h, w * 3, 24, 0xFF0000, 0x00FF00, 0x0000FF, false);
+  FIBITMAP *img = FreeImage_ConvertFromRawBits(pixels, width, height, width * 3, 24, 0xFF0000, 0x00FF00, 0x0000FF, false);
   fname.append(".png");
   std::cout << "Saving screenshot: " << fname << "\n";
 
@@ -180,16 +174,17 @@ int main(int argc, char* argv[]) {
 
     init();
     readfile(argv[1]);
-    reshape(w, h);
+    reshape();
 
-    vec3 *pixels = new vec3[w*h];
+    vec3 *pixels = new vec3[width*height];
 
-    for (int i=0; i<h; i++){
-        for (int j=0; j<w; j++){
+    for (int i=0; i<height; i++){
+        for (int j=0; j<width; j++){
             Ray ray = rayThruPixel(i, j);
             Hit *hit = Intersect(ray);
             vec3 color = FindColor (hit);
-            pixels[i*h+j] = color;
+            pixels[i*width+j] = color;
+            // pixels[j*h+i] = color;
         }
     }
     saveScreenshot(argv[1], pixels);

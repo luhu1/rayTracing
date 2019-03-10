@@ -122,7 +122,8 @@ void readfile(const char* filename)
         } else if (cmd == "size") {
           validinput = readvals(s,2,values);
           if (validinput) {
-            w = (int) values[0]; h = (int) values[1];
+            width = (int) values[0];
+            height = (int) values[1];
           }
         } else if (cmd == "camera") {
           validinput = readvals(s,10,values); // 10 values eye cen up fov
@@ -135,8 +136,8 @@ void readfile(const char* filename)
             // Set eyeinit upinit center fovy in variables.h
             eyeinit = vec3(values[0], values[1], values[2]);
             center = vec3(values[3], values[4], values[5]);
-            vec3 up = vec3(values[6], values[7], values[8]);
-            upinit = Transform::upvector(up, eyeinit-center);
+            upinit = vec3(values[6], values[7], values[8]);
+            upinit = Transform::upvector(upinit, eyeinit-center);
             fovy = values[9];
           }
         }
