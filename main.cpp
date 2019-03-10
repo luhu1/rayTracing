@@ -92,21 +92,26 @@ void TriangleIntersection(Ray ray, Triangle *tri, Hit *&h) {
     vec3 v2 = tri->v2;
     vec3 v3 = tri->v3;
 
-    vec3 n= glm::normalize(glm::cross((v3-v1),(v2-v1)));
-    float t = (glm::dot(v1,n) - glm::dot(ray.p0,n)) / (glm::dot(ray.p1,n));
-    vec3 point = ray.p0 + ray.p1*t;
-    float beta, gamma;
-    float a1,b1,c1,a2,b2,c2;
-    a1=v2[0]-v1[0];
-    b1=v3[0]-v1[0];
-    c1=point[0]-v1[0];
-    a2=v2[1]-v1[1];
-    b2=v3[1]-v1[1];
-    c2=point[1]-v1[1];
-    gamma = (c2*a1-a2*c1)/(b2*a1-a2*b1);
-    beta = c1/a1 - (b1/a1)*gamma;
+    vec3 n = glm::normalize(glm::cross((v3-v1),(v2-v1)));
+    if (glm::dot(ray.p1,n) == 0)
+        return; // parallel to the plane
 
-    if ((gamma+beta) <=1 && 0<=gamma && gamma<=1 && 0<=beta && beta<=1 && t > 0){
+    float t = (glm::dot(v1,n) - glm::dot(ray.p0,n)) / (glm::dot(ray.p1,n));
+    // cout << t << endl;
+    if (t <= 0)
+        return; // Intersect behind the camera
+
+    vec3 point = ray.p0 + ray.p1*t;
+    vec3 AB = v2 - v1, AC = v3 - v1;
+    vec3 PA = v1 - point, PB = v2 - point, PC = v3 - point;
+
+    // Barycentric coordinates
+    float Area = glm::length(glm::cross(AB, AC));
+    float alpha = glm::length(glm::cross(PB, PC)) / Area;
+    float beta = glm::length(glm::cross(PC, PA)) / Area;
+    float gamma = glm::length(glm::cross(PA, PB)) / Area;
+
+    if (alpha >= 0 && beta >= 0 && gamma >= 0 && fabs(alpha + beta + gamma - 1) <= 0.001){
         h = new Hit();
         h->t = t;
         h->normal = n;
@@ -136,10 +141,10 @@ Hit * Intersect(Ray ray){
 
     // find the closest Intersected object
     Hit *h = hitList[0];
-    float minDist = calDistance(eye, hitList[0]->p);
+    float minDist = glm::distance(eye, hitList[0]->p);
 
     for (int i=1; i< hitList.size(); i++){
-        float dist = calDistance(eye, hitList[i]->p);
+        float dist = glm::distance(eye, hitList[i]->p);
         if (dist < minDist){
             minDist = dist;
             h = hitList[i];
@@ -184,7 +189,6 @@ int main(int argc, char* argv[]) {
             Hit *hit = Intersect(ray);
             vec3 color = FindColor (hit);
             pixels[i*width+j] = color;
-            // pixels[j*h+i] = color;
         }
     }
     saveScreenshot(argv[1], pixels);

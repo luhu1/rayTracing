@@ -170,10 +170,6 @@ void readfile(const char* filename)
           validinput = readvals(s,3,values);
           if (validinput) {
 
-            // YOUR CODE FOR HW 2 HERE.
-            // Think about how the transformation stack is affected
-            // You might want to use helper functions on top of file.
-            // Also keep in mind what order your matrix is!
             float tx = values[0];
             float ty = values[1];
             float tz = values[2];
@@ -187,10 +183,6 @@ void readfile(const char* filename)
           validinput = readvals(s,3,values);
           if (validinput) {
 
-            // YOUR CODE FOR HW 2 HERE.
-            // Think about how the transformation stack is affected
-            // You might want to use helper functions on top of file.
-            // Also keep in mind what order your matrix is!
             float sx = values[0];
             float sy = values[1];
             float sz = values[2];
@@ -203,13 +195,6 @@ void readfile(const char* filename)
         else if (cmd == "rotate") {
           validinput = readvals(s,4,values);
           if (validinput) {
-
-            // YOUR CODE FOR HW 2 HERE.
-            // values[0..2] are the axis, values[3] is the angle.
-            // You may want to normalize the axis (or in Transform::rotate)
-            // See how the stack is affected, as above.
-            // Note that rotate returns a mat3.
-            // Also keep in mind what order your matrix is!
 
             vec3 axis = vec3(values[0], values[1], values[2]);
             axis = normalize(axis);
