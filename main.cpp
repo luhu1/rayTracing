@@ -116,7 +116,6 @@ void TriangleIntersection(Ray ray, Triangle *tri) {
         return; // parallel to the plane
 
     float t = (glm::dot(v1,n) - glm::dot(ray.p0,n)) / (glm::dot(ray.p1,n));
-    // cout << t << endl;
     if (t <= 0)
         return; // Intersect behind the camera
 
