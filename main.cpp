@@ -65,28 +65,47 @@ vec3 FindColor (Hit *hit){
 }
 
 
-void SphereIntersection (Ray ray, Sphere *s, Hit *&h){
+void SphereIntersection (Ray ray, Sphere *s){
 
     vec3 center = s->center;
     float a = glm::dot(ray.p1,ray.p1);
     float b = 2 * glm::dot(ray.p1 , (ray.p0 - center));
     float c = glm::dot((ray.p0 - center),(ray.p0 - center)) - pow(s->radius,2);
     float discriminant = pow(b,2) - 4 * a * c;
-    if (discriminant > 0){
-        float t = -b - sqrt(b*b-4*a*c) / (2 * a);
-        if (t <= 0)
-            return;
-        vec3 point = ray.p0+ray.p1*t;
-        vec3 n = glm::normalize(point-center);
-        h = new Hit();
-        h->t = t;
-        h->normal = n;
-        h->obj = s;
-        h->p = point;
+
+
+    if (discriminant >= 0){
+        float t = (-b + sqrt(discriminant)) / (2 * a);
+        if (t > 0){
+            vec3 point = ray.rayPath(t);
+            vec3 n = glm::normalize(point-center);
+
+            Hit *h = new Hit();
+            h->t = t;
+            h->normal = n;
+            h->obj = s;
+            h->p = point;
+            hitList.push_back(h);
+        }
+
+        if (discriminant > 0){
+            t = (-b - sqrt(discriminant)) / (2 * a);
+            if (t > 0){
+                vec3 point = ray.rayPath(t);
+                vec3 n = glm::normalize(point-center);
+
+                Hit *h = new Hit();
+                h->t = t;
+                h->normal = n;
+                h->obj = s;
+                h->p = point;
+                hitList.push_back(h);
+            }
+        }
     }
 }
 
-void TriangleIntersection(Ray ray, Triangle *tri, Hit *&h) {
+void TriangleIntersection(Ray ray, Triangle *tri) {
 
     vec3 v1 = tri->v1;
     vec3 v2 = tri->v2;
@@ -112,11 +131,12 @@ void TriangleIntersection(Ray ray, Triangle *tri, Hit *&h) {
     float gamma = glm::length(glm::cross(PA, PB)) / Area;
 
     if (alpha >= 0 && beta >= 0 && gamma >= 0 && fabs(alpha + beta + gamma - 1) <= 0.001){
-        h = new Hit();
+        Hit *h = new Hit();
         h->t = t;
         h->normal = n;
         h->obj = tri;
         h->p = point;
+        hitList.push_back(h);
     }
 }
 
@@ -125,15 +145,12 @@ Hit * Intersect(Ray ray){
     hitList.clear();
 
     for (int i=0; i<objects.size(); i++){
-        Hit *h = NULL;
         if (objects[i]->typeName == sphereType){
-            SphereIntersection (ray, (Sphere*)objects[i], h);
+            SphereIntersection (ray, (Sphere*)objects[i]);
         }
         else if (objects[i]->typeName == triangleType){
-            TriangleIntersection(ray, (Triangle*)objects[i], h);
+            TriangleIntersection(ray, (Triangle*)objects[i]);
         }
-        if (h != NULL)
-            hitList.push_back(h);
     }
 
     if (hitList.empty())

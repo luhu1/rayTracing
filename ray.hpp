@@ -37,6 +37,4 @@ struct Hit {
 typedef struct Hit Hit;
 
 
-float calDistance(const vec3 p1, const vec3 p2);
-
 #endif
