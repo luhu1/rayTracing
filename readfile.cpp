@@ -35,6 +35,12 @@ void rightmultiply(const mat4 & M, stack<mat4> &transfstack)
   T = T * M;
 }
 
+void vectransform(vec3 &point, mat4 M){
+    vec4 p = vec4(point.x, point.y, point.z, 1.0f);
+    p = M * p;
+    point = vec3(p.x/p.w, p.y/p.x, p.z/p.w);
+}
+
 // Function to read the input data values
 bool readvals(stringstream &s, const int numvals, float* values)
 {
@@ -168,6 +174,7 @@ void readfile(const char* filename)
 
             // Set the object's transform
             s->transform = transfstack.top();
+            vectransform(s->center, s->transform);
             objects.push_back(s);
             }
         }
@@ -274,7 +281,11 @@ void readfile(const char* filename)
                 tri->emission = vec3(emission);
                 tri->shininess = float(shininess);
 
+
                 tri->transform = transfstack.top();
+                vectransform(tri->v1, tri->transform);
+                vectransform(tri->v2, tri->transform);
+                vectransform(tri->v3, tri->transform);
                 objects.push_back(tri);
             }
         }
