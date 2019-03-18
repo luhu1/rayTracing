@@ -16,6 +16,8 @@
 using namespace std;
 #include "variables.h"
 #include "readfile.h"
+#include "ray.hpp"
+#include "object.hpp"
 
 
 // The function below applies the appropriate transform to a 4-vector

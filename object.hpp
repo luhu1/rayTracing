@@ -1,6 +1,11 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+typedef glm::vec3 vec3 ;
+typedef glm::mat4 mat4 ;
+
 enum objectType {sphereType, triangleType};
 
 struct Object {

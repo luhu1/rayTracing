@@ -7,10 +7,6 @@
 typedef glm::vec3 vec3 ;
 typedef glm::mat4 mat4 ;
 
-#include "object.hpp"
-
-typedef glm::vec3 vec3 ;
-
 class Ray{
 public:
     Ray();
@@ -36,5 +32,9 @@ struct Hit {
 };
 typedef struct Hit Hit;
 
+
+Hit * Intersect(Ray ray);
+void SphereIntersection (Ray ray, Sphere *s);
+void TriangleIntersection(Ray ray, Triangle *tri);
 
 #endif

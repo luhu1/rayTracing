@@ -37,17 +37,17 @@ EXTERN float sx, sy ; // the scale in x and y
 EXTERN float tx, ty ; // the translation in x and y
 
 
-EXTERN vector <vec3> dirlightposn; // Directional Light Positions
-EXTERN vector <vec3> dirlightcolor; // Directional Light Colors
-EXTERN vector <vec3> dirlightransf; // Directional Lights transformed by modelview
+EXTERN std::vector <vec3> dirlightposn; // Directional Light Positions
+EXTERN std::vector <vec3> dirlightcolor; // Directional Light Colors
+EXTERN std::vector <vec3> dirlightransf; // Directional Lights transformed by modelview
 
-EXTERN vector <vec3> ptlightposn; // Point Light Positions
-EXTERN vector <vec3> ptlightcolor; // Point Light Colors
-EXTERN vector <vec3> ptlightransf; // Point Lights transformed by modelview
+EXTERN std::vector <vec3> ptlightposn; // Point Light Positions
+EXTERN std::vector <vec3> ptlightcolor; // Point Light Colors
+EXTERN std::vector <vec3> ptlightransf; // Point Lights transformed by modelview
 
 
 EXTERN int maxverts;
-EXTERN vector <vec3> vertices;
+EXTERN std::vector <vec3> vertices;
 
 // Materials (read from file)
 // With multiple objects, these are colors for each.
@@ -57,8 +57,7 @@ EXTERN vec3 specular ;
 EXTERN vec3 emission ;
 EXTERN float shininess ;
 
-
-EXTERN vector <Object*> objects;
-EXTERN vector <Hit*> hitList;
+EXTERN std::vector <Hit*> hitList;
+EXTERN std::vector <Object*> objects;
 
 #endif
