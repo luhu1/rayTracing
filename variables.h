@@ -57,7 +57,6 @@ EXTERN vec3 specular ;
 EXTERN vec3 emission ;
 EXTERN float shininess ;
 
-EXTERN std::vector <Hit*> hitList;
 EXTERN std::vector <Object*> objects;
 
 #endif

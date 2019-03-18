@@ -1,5 +1,30 @@
 #include "variables.h"
 
+void recRayTracing(Ray ray, int depth, std::vector<Hit*>& hitList){
+    if (depth == maxdepth)
+        return;
+
+    Hit *hit = Intersect(ray);
+    if (hit){
+        hit->depth = depth;
+        hitList.push_back(hit);
+    }
+    else{
+        return;
+    }
+
+    vec3 dir = calReflection(ray.p1, hit->normal);
+    Ray ray2 = Ray(hit->p, dir);
+    recRayTracing(ray2, depth+1, hitList);
+}
+
+
+vec3 calReflection(vec3 d, vec3 n){
+    vec3 r = d - 2 * glm::dot(d, n) * n;
+    return glm::normalize(r);
+}
+
+
 Ray rayThruPixel(int i, int j){
     float fovyR = glm::radians(fovy);
     vec3 w = glm::normalize(eye - center);
@@ -20,17 +45,16 @@ Ray rayThruPixel(int i, int j){
 
 
 Hit * Intersect(Ray ray){
-    hitList.clear();
+    std::vector <Hit*> hitList;
 
     for (int i=0; i<objects.size(); i++){
         if (objects[i]->typeName == sphereType){
-            SphereIntersection (ray, (Sphere*)objects[i]);
+            SphereIntersection (ray, (Sphere*)objects[i], hitList);
         }
         else if (objects[i]->typeName == triangleType){
-            TriangleIntersection(ray, (Triangle*)objects[i]);
+            TriangleIntersection(ray, (Triangle*)objects[i], hitList);
         }
     }
-
     if (hitList.empty())
         return NULL;
 
@@ -49,7 +73,7 @@ Hit * Intersect(Ray ray){
 }
 
 
-void SphereIntersection (Ray ray, Sphere *s){
+void SphereIntersection (Ray ray, Sphere *s, std::vector<Hit*>& hitList){
 
     vec3 center = s->center;
     float a = glm::dot(ray.p1,ray.p1);
@@ -90,7 +114,7 @@ void SphereIntersection (Ray ray, Sphere *s){
 }
 
 
-void TriangleIntersection(Ray ray, Triangle *tri) {
+void TriangleIntersection(Ray ray, Triangle *tri, std::vector<Hit*>& hitList){
 
     vec3 v1 = tri->v1;
     vec3 v2 = tri->v2;

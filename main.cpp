@@ -95,6 +95,14 @@ vec3 FindColor (Hit *hit){
 }
 
 
+vec3 recFindColor (vector<Hit*> hitList){
+    vec3 color = vec3(0, 0, 0);
+    for(auto it=hitList.begin(); it!=hitList.end(); it++){
+        color += FindColor(*it);
+    }
+    return color;
+}
+
 
 void saveScreenshot(string fname, vec3 *pix) {
   BYTE *pixels = new BYTE[3*width*height];
