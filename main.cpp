@@ -84,7 +84,7 @@ vec3 calColor(Hit *hit){
 
 
 vec3 FindColor (Hit *hit){
-    if (hit == NULL)
+    if (!hit)
         return vec3(0, 0, 0);
     else if (hit->obj->typeName == sphereType)
         return calColor(hit);
@@ -94,13 +94,20 @@ vec3 FindColor (Hit *hit){
         return vec3(0, 0, 0);
 }
 
+vec3 recRayTracing(Ray ray, int depth){
+    if (depth == maxdepth)
+        return vec3(0, 0, 0);
 
-vec3 recFindColor (vector<Hit*> hitList){
-    vec3 color = vec3(0, 0, 0);
-    for(auto it=hitList.begin(); it!=hitList.end(); it++){
-        color += FindColor(*it);
-    }
-    return color;
+    Hit *hit = Intersect(ray);
+
+    if (!hit)
+        return vec3(0, 0, 0);
+
+    vec3 color = FindColor(hit);
+
+    vec3 dir = calReflection(ray.p1, hit->normal);
+    Ray ray2 = Ray(hit->p, dir);
+    return color + recRayTracing(ray2, depth+1);
 }
 
 
@@ -113,7 +120,6 @@ void saveScreenshot(string fname, vec3 *pix) {
   }
 
   FIBITMAP *img = FreeImage_ConvertFromRawBits(pixels, width, height, width * 3, 24, 0xFF0000, 0x00FF00, 0x0000FF, false);
-  fname.append(".png");
   std::cout << "Saving screenshot: " << fname << "\n";
 
   FreeImage_Save(FIF_PNG, img, fname.c_str(), 0);
@@ -137,12 +143,11 @@ int main(int argc, char* argv[]) {
     for (int i=0; i<height; i++){
         for (int j=0; j<width; j++){
             Ray ray = rayThruPixel(i, j);
-            Hit *hit = Intersect(ray);
-            vec3 color = FindColor (hit);
+            vec3 color = recRayTracing(ray, 0);
             pixels[i*width+j] = color;
         }
     }
-    saveScreenshot(argv[1], pixels);
+    saveScreenshot(outname, pixels);
 
     destroy();
     FreeImage_DeInitialise();

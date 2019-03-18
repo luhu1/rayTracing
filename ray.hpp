@@ -29,12 +29,11 @@ struct Hit {
     vec3 p; // Intersection point
     vec3 normal;
     Object *obj;
-    int depth;
 };
 typedef struct Hit Hit;
 
 
-void recRayTracing(Ray ray, int depth);
+// void recRayTracing(Ray ray, int depth);
 vec3 calReflection(vec3 d, vec3 n);
 Ray rayThruPixel(int i, int j);
 Hit * Intersect(Ray ray);

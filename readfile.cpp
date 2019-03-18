@@ -225,6 +225,14 @@ void readfile(const char* filename)
           }
         }
 
+        else if (cmd == "output"){
+            s >> outname;
+            cout << outname << endl;
+            if (s.fail()) {
+              cout << "Failed reading value " << 0 << " will skip\n";
+          }
+        }
+
         else if (cmd == "maxdepth"){
             validinput = readvals(s,1,values);
             if (validinput) {

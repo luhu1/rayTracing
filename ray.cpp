@@ -1,23 +1,5 @@
 #include "variables.h"
 
-void recRayTracing(Ray ray, int depth, std::vector<Hit*>& hitList){
-    if (depth == maxdepth)
-        return;
-
-    Hit *hit = Intersect(ray);
-    if (hit){
-        hit->depth = depth;
-        hitList.push_back(hit);
-    }
-    else{
-        return;
-    }
-
-    vec3 dir = calReflection(ray.p1, hit->normal);
-    Ray ray2 = Ray(hit->p, dir);
-    recRayTracing(ray2, depth+1, hitList);
-}
-
 
 vec3 calReflection(vec3 d, vec3 n){
     vec3 r = d - 2 * glm::dot(d, n) * n;
