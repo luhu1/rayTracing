@@ -73,9 +73,6 @@ void transformvec (const float input[4], float output[4])
 //   }
 // }
 
-float max (const float a, const float b){
-    return a > b? a: b;
-}
 
 vec3 ComputeLight (const vec3 direction, const vec3 lightcolor, const vec3 normal, const vec3 halfvec, const vec3 mydiffuse, const vec3 myspecular, const float myshininess) {
 
@@ -90,19 +87,19 @@ vec3 ComputeLight (const vec3 direction, const vec3 lightcolor, const vec3 norma
     }
 
 
-vec3 calColor(vec3 mynormal, vec4 myvertex){
+vec3 calColor(vec3 normal, vec3 mypos){
     vec3 finalcolor = vec3(0.0f, 0.0f, 0.0f);
 
 
-    const vec3 eyepos = vec3(0,0,0) ;
-    vec4 myvertex2 = modelview * myvertex;
-    vec3 mypos = myvertex2.xyz / myvertex2.w ; // Dehomogenize current location
+    // mat4 modelview( 1.0f );
+    // vec4 myvertex2 = modelview * myvertex;
+    // vec3 mypos = myvertex2.xyz / myvertex2.w ; // Dehomogenize current location
 
-    vec3 eyedirn = normalize(eyepos - mypos) ;
+    vec3 eyedirn = normalize(eye - mypos) ;
 
     // Compute normal, needed for shading.
-    vec3 mynormal2 =  mat3(transpose(inverse(modelview))) * mynormal ;
-    vec3 normal = normalize(mynormal2) ;
+    // vec3 mynormal2 =  mat3(transpose(inverse(modelview))) * mynormal ;
+    // vec3 normal = normalize(mynormal2) ;
 
     finalcolor = ambient;
     vec3 col;

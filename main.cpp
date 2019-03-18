@@ -33,13 +33,63 @@ void destroy(){
 }
 
 
+vec3 ComputeLight (const vec3 direction, const vec3 lightcolor, const vec3 normal, const vec3 halfvec, const vec3 mydiffuse, const vec3 myspecular, const float myshininess) {
+
+    float nDotL = dot(normal, direction)  ;
+    vec3 lambert = mydiffuse * lightcolor * max (nDotL, 0.0f) ;
+
+    float nDotH = dot(normal, halfvec) ;
+    vec3 phong = myspecular * lightcolor * pow (max(nDotH, 0.0f), myshininess) ;
+
+    vec3 retval = lambert + phong ;
+    return retval ;
+    }
+
+
+vec3 calColor(Hit *hit){
+    vec3 normal = hit->normal;
+    vec3 mypos = hit->p;
+    vec3 ambient = hit->obj->ambient;
+    vec3 diffuse = hit->obj->diffuse;
+    vec3 specular = hit->obj->specular;
+    vec3 emission = hit->obj->emission;
+    float shininess = hit->obj->shininess;
+
+    vec3 fragColor = vec3(0.0f, 0.0f, 0.0f);
+    vec3 eyedirn = normalize(eye - mypos) ;
+
+    fragColor = ambient;
+    vec3 col;
+
+    // Directional lights
+    for (int i=0; i<dirlightposn.size(); i++){
+        vec3 direction = normalize (dirlightposn[i]) ;
+        vec3 half1 = normalize (direction + eyedirn) ;
+        col = ComputeLight(direction, dirlightcolor[i], normal, half1, diffuse, specular, shininess) ;
+        fragColor += col;
+    }
+
+    // Point lights
+    for (int i=0; i<ptlightposn.size(); i++){
+        vec3 position = ptlightposn[i];
+        vec3 direction = normalize (position - mypos) ;
+        vec3 half1 = normalize (direction + eyedirn) ;
+        col = ComputeLight(direction, ptlightcolor[i], normal, half1, diffuse, specular, shininess) ;
+        fragColor += col;
+    }
+
+    // fragColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    return fragColor;
+}
+
+
 vec3 FindColor (Hit *hit){
     if (hit == NULL)
         return vec3(0, 0, 0);
     else if (hit->obj->typeName == sphereType)
-        return vec3(0, 255, 0);
+        return calColor(hit);
     else if (hit->obj->typeName == triangleType)
-        return vec3(0, 0, 255);
+        return calColor(hit);
     else
         return vec3(0, 0, 0);
 }

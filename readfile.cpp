@@ -100,21 +100,25 @@ void readfile(const char* filename)
           validinput = readvals(s, 3, values); // colors
           if (validinput) {
               ambient = vec3(values[0], values[1], values[2]);
+              ambient *= 255;
           }
         } else if (cmd == "diffuse") {
           validinput = readvals(s, 3, values);
           if (validinput) {
               diffuse = vec3(values[0], values[1], values[2]);
+              diffuse *= 255;
           }
         } else if (cmd == "specular") {
           validinput = readvals(s, 3, values);
           if (validinput) {
               specular = vec3(values[0], values[1], values[2]);
+              specular *= 255;
           }
         } else if (cmd == "emission") {
           validinput = readvals(s, 3, values);
           if (validinput) {
               emission = vec3(values[0], values[1], values[2]);
+              emission *= 255;
           }
         } else if (cmd == "shininess") {
           validinput = readvals(s, 1, values);
@@ -160,7 +164,7 @@ void readfile(const char* filename)
             s->diffuse = vec3(diffuse);
             s->specular = vec3(specular);
             s->emission = vec3(emission);
-            s->shininess = vec3(shininess);
+            s->shininess = float(shininess);
 
             // Set the object's transform
             s->transform = transfstack.top();
@@ -221,6 +225,13 @@ void readfile(const char* filename)
           }
         }
 
+        else if (cmd == "maxdepth"){
+            validinput = readvals(s,1,values);
+            if (validinput) {
+                maxdepth = (int)values[0];
+            }
+        }
+
         else if (cmd == "maxverts"){
             validinput = readvals(s,1,values);
             if (validinput) {
@@ -253,7 +264,7 @@ void readfile(const char* filename)
                 tri->diffuse = vec3(diffuse);
                 tri->specular = vec3(specular);
                 tri->emission = vec3(emission);
-                tri->shininess = vec3(shininess);
+                tri->shininess = float(shininess);
 
                 tri->transform = transfstack.top();
                 objects.push_back(tri);
@@ -267,12 +278,11 @@ void readfile(const char* filename)
       getline (in, str);
     }
 
-    // Set up initial position for eye, up and amount
+    // Set up initial position for eye, up
     // As well as booleans
 
     eye = eyeinit;
     up = upinit;
-    amount = amountinit;
     sx = sy = 1.0;  // keyboard controlled scales in x and y
     tx = ty = 0.0;  // keyboard controllled translation in x and y
 

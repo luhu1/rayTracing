@@ -14,7 +14,7 @@ struct Object {
     vec3 diffuse;
     vec3 specular;
     vec3 emission;
-    vec3 shininess ;
+    float shininess ;
     mat4 transform ;
 };
 typedef struct Object Object;
