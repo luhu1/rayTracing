@@ -38,7 +38,7 @@ void rightmultiply(const mat4 & M, stack<mat4> &transfstack)
 void vectransform(vec3 &point, mat4 M){
     vec4 p = vec4(point.x, point.y, point.z, 1.0f);
     p = M * p;
-    point = vec3(p.x/p.w, p.y/p.x, p.z/p.w);
+    point = vec3(p.x/p.w, p.y/p.w, p.z/p.w);
 }
 
 // Function to read the input data values
@@ -233,7 +233,6 @@ void readfile(const char* filename)
 
         else if (cmd == "output"){
             s >> outname;
-            cout << outname << endl;
             if (s.fail()) {
               cout << "Failed reading value " << 0 << " will skip\n";
           }
