@@ -195,7 +195,6 @@ void readfile(const char* filename)
         else if (cmd == "scale") {
           validinput = readvals(s,3,values);
           if (validinput) {
-
             float sx = values[0];
             float sy = values[1];
             float sz = values[2];
@@ -238,6 +237,15 @@ void readfile(const char* filename)
             if (s.fail()) {
               cout << "Failed reading value " << 0 << " will skip\n";
           }
+        }
+
+        else if (cmd == "attenuation"){
+            validinput = readvals(s,3,values);
+            if (validinput) {
+                attenuation[0] = values[0];
+                attenuation[1] = values[1];
+                attenuation[2] = values[2];
+            }
         }
 
         else if (cmd == "maxdepth"){

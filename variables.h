@@ -38,6 +38,7 @@ EXTERN mat4 projection, modelview; // The mvp matrices
 static enum {view, translate, scale} transop ; // which operation to transform
 EXTERN float sx, sy ; // the scale in x and y
 EXTERN float tx, ty ; // the translation in x and y
+EXTERN vec3 attenuation;
 
 
 EXTERN std::vector <vec3> dirlightposn; // Directional Light Positions
