@@ -1,5 +1,24 @@
 #include "variables.h"
 
+Ray rayThruPixel(int i, int j){
+    float fovyR = glm::radians(fovy);
+    vec3 w = glm::normalize(eye - center);
+    vec3 u = glm::normalize(glm::cross(up, w));
+    vec3 v = glm::normalize(glm::cross(w, u));
+
+    float ratio = (float) width / height;
+    float fovxR = ratio * fovyR;
+
+    float alpha = glm::tan((float)fovxR/2) * ((j-((float)width/2))/((float)width / 2));
+    float beta  = glm::tan((float)fovyR/2) * (((float)height/2-i)/((float)height/2));
+
+    vec3 direction = glm::normalize(alpha*u+beta*v-w);
+    Ray ray = Ray(eye, direction);
+
+    return ray;
+}
+
+
 Hit * Intersect(Ray ray){
     hitList.clear();
 

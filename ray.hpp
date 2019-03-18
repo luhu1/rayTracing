@@ -33,6 +33,7 @@ struct Hit {
 typedef struct Hit Hit;
 
 
+Ray rayThruPixel(int i, int j);
 Hit * Intersect(Ray ray);
 void SphereIntersection (Ray ray, Sphere *s);
 void TriangleIntersection(Ray ray, Triangle *tri);
