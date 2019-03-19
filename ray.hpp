@@ -10,9 +10,9 @@ typedef glm::mat4 mat4 ;
 class Ray{
 public:
     Ray();
-    Ray(vec3& p0, vec3& p1){
-        this->p0 = p0;
-        this->p1 = p1;
+    Ray(vec3 p0, vec3 p1){
+        this->p0 = vec3(p0);
+        this->p1 = vec3(p1);
     }
 
     vec3 rayPath(float t){
@@ -34,6 +34,7 @@ typedef struct Hit Hit;
 
 
 // void recRayTracing(Ray ray, int depth);
+int lightVisility(vec3 pos, vec3 lightpos, bool isPtLight);
 vec3 calReflection(vec3 d, vec3 n);
 Ray rayThruPixel(int i, int j);
 Hit * Intersect(Ray ray);

@@ -20,10 +20,11 @@ EXTERN vec3 up;  // The (regularly updated) vector coordinates of the up
 vec3 eyeinit(0.0,0.0,5.0) ; // Initial eye position, also for resets
 vec3 upinit(0.0,1.0,0.0) ; // Initial up position, also for resets
 vec3 center(0.0,0.0,0.0) ; // Center look at point
-int maxdepth = 5;   // maximum recursive depth
+int maxdepth = 1;   // maximum recursive depth
 int width = 500, height = 500 ; // width and height
 float fovy = 90.0 ; // For field of view
 std::string outname = "output.png";
+vec3 attenuation = vec3(1.0f, 0.0f, 0.0f);
 #else
 EXTERN vec3 eyeinit ;
 EXTERN vec3 upinit ;
@@ -32,13 +33,13 @@ EXTERN int maxdepth;
 EXTERN int width, height ;
 EXTERN float fovy ;
 EXTERN std::string outname;
+EXTERN vec3 attenuation;
 #endif
 
 EXTERN mat4 projection, modelview; // The mvp matrices
 static enum {view, translate, scale} transop ; // which operation to transform
 EXTERN float sx, sy ; // the scale in x and y
 EXTERN float tx, ty ; // the translation in x and y
-EXTERN vec3 attenuation;
 
 
 EXTERN std::vector <vec3> dirlightposn; // Directional Light Positions

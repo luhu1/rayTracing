@@ -33,17 +33,23 @@ void destroy(){
 }
 
 
-vec3 ComputeLight (const vec3 direction, const vec3 lightcolor, const vec3 normal, const vec3 halfvec, const vec3 mydiffuse, const vec3 myspecular, const float myshininess) {
+vec3 ComputeLight (const vec3 direction, const vec3 lightcolor, const vec3 normal, const vec3 halfvec, const vec3 diffuse, const vec3 specular, const float shininess) {
 
     float nDotL = dot(normal, direction)  ;
-    vec3 lambert = mydiffuse * lightcolor * max (nDotL, 0.0f) ;
+    vec3 lambert = diffuse * lightcolor * max (nDotL, 0.0f) ;
 
     float nDotH = dot(normal, halfvec) ;
-    vec3 phong = myspecular * lightcolor * pow (max(nDotH, 0.0f), myshininess) ;
+    vec3 phong = specular * lightcolor * pow (max(nDotH, 0.0f), shininess) ;
 
     vec3 retval = lambert + phong ;
     return retval ;
     }
+
+
+float calAttenuation(float dist){
+    float v = attenuation[0] + attenuation[1] * dist + attenuation[2] * dist * dist;
+    return 1.0f / v;
+}
 
 
 vec3 calColor(Hit *hit){
@@ -65,8 +71,11 @@ vec3 calColor(Hit *hit){
     for (int i=0; i<dirlightposn.size(); i++){
         vec3 direction = normalize (dirlightposn[i]) ;
         vec3 half1 = normalize (direction + eyedirn) ;
-        col = ComputeLight(direction, dirlightcolor[i], normal, half1, diffuse, specular, shininess) ;
-        fragColor += col;
+
+        if (lightVisility(mypos, dirlightposn[i], false)){
+            col = ComputeLight(direction, dirlightcolor[i], normal, half1, diffuse, specular, shininess) ;
+            fragColor += col;
+        }
     }
 
     // Point lights
@@ -74,11 +83,13 @@ vec3 calColor(Hit *hit){
         vec3 position = ptlightposn[i];
         vec3 direction = normalize (position - mypos) ;
         vec3 half1 = normalize (direction + eyedirn) ;
-        col = ComputeLight(direction, ptlightcolor[i], normal, half1, diffuse, specular, shininess) ;
-        fragColor += col;
+
+        if (lightVisility(mypos, position, true)){
+            col = ComputeLight(direction, ptlightcolor[i], normal, half1, diffuse, specular, shininess) ;
+            fragColor += col;
+        }
     }
 
-    // fragColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
     return fragColor;
 }
 

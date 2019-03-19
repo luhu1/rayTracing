@@ -1,6 +1,38 @@
 #include "variables.h"
 
 
+int lightVisility(vec3 pos, vec3 lightpos, bool isPtLight){
+    std::vector <Hit*> hitList;
+    vec3 dir;
+
+    if (isPtLight){
+        dir = lightpos - pos;
+    }
+    else{
+        dir = glm::normalize(-lightpos);
+    }
+    Ray ray = Ray(pos, dir);
+
+
+
+    for (int i=0; i<objects.size(); i++){
+        if (objects[i]->typeName == sphereType){
+            SphereIntersection (ray, (Sphere*)objects[i], hitList);
+        }
+        else if (objects[i]->typeName == triangleType){
+            TriangleIntersection(ray, (Triangle*)objects[i], hitList);
+        }
+    }
+    for (auto it=hitList.begin(); it!=hitList.end(); it++){
+        if (isPtLight && (*it)->t > 1)
+            return 0;
+        else if (!isPtLight && (*it)->t > 0)
+            return 0;
+    }
+    return 1;
+}
+
+
 vec3 calReflection(vec3 d, vec3 n){
     vec3 r = d - 2 * glm::dot(d, n) * n;
     return glm::normalize(r);
