@@ -79,14 +79,15 @@ void readfile(const char* filename)
             if (validinput){
                 dirlightposn.push_back(vec3(values[0], values[1], values[2]));
                 dirlightcolor.push_back(vec3(values[3], values[4], values[5]));
+
             }
         }
 
         else if (cmd == "point") {
             validinput = readvals(s, 6, values);
             if (validinput){
-                dirlightposn.push_back(vec3(values[0], values[1], values[2]));
-                dirlightcolor.push_back(vec3(values[3], values[4], values[5]));
+                ptlightposn.push_back(vec3(values[0], values[1], values[2]));
+                ptlightcolor.push_back(vec3(values[3], values[4], values[5]));
             }
         }
 
@@ -100,25 +101,21 @@ void readfile(const char* filename)
           validinput = readvals(s, 3, values); // colors
           if (validinput) {
               ambient = vec3(values[0], values[1], values[2]);
-              ambient *= 255;
           }
         } else if (cmd == "diffuse") {
           validinput = readvals(s, 3, values);
           if (validinput) {
               diffuse = vec3(values[0], values[1], values[2]);
-              diffuse *= 255;
           }
         } else if (cmd == "specular") {
           validinput = readvals(s, 3, values);
           if (validinput) {
               specular = vec3(values[0], values[1], values[2]);
-              specular *= 255;
           }
         } else if (cmd == "emission") {
           validinput = readvals(s, 3, values);
           if (validinput) {
               emission = vec3(values[0], values[1], values[2]);
-              emission *= 255;
           }
         } else if (cmd == "shininess") {
           validinput = readvals(s, 1, values);
@@ -226,7 +223,7 @@ void readfile(const char* filename)
         }
 
         else if (cmd == "output"){
-            s >> outname;
+            s >> output;
             if (s.fail()) {
               cout << "Failed reading value " << 0 << " will skip\n";
           }

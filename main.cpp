@@ -64,7 +64,7 @@ vec3 calColor(Hit *hit){
     vec3 fragColor = vec3(0.0f, 0.0f, 0.0f);
     vec3 eyedirn = normalize(eye - mypos) ;
 
-    fragColor = ambient;
+    fragColor = ambient + emission;
     vec3 col;
 
     // Directional lights
@@ -74,8 +74,7 @@ vec3 calColor(Hit *hit){
 
         if (lightVisility(mypos, dirlightposn[i], false)){
             col = ComputeLight(direction, dirlightcolor[i], normal, half1, diffuse, specular, shininess) ;
-            float attn = calAttenuation(distance(mypos, dirlightposn[i]));
-            fragColor += attn * col;
+            fragColor += col;
         }
     }
 
@@ -87,7 +86,8 @@ vec3 calColor(Hit *hit){
 
         if (lightVisility(mypos, position, true)){
             col = ComputeLight(direction, ptlightcolor[i], normal, half1, diffuse, specular, shininess) ;
-            fragColor += col;
+            float attn = calAttenuation(distance(mypos, ptlightcolor[i]));
+            fragColor += attn * col;
         }
     }
 
@@ -97,23 +97,23 @@ vec3 calColor(Hit *hit){
 
 vec3 FindColor (Hit *hit){
     if (!hit)
-        return vec3(0, 0, 0);
+        return vec3(0.0f, 0.0f, 0.0f);
     else if (hit->obj->typeName == sphereType)
         return calColor(hit);
     else if (hit->obj->typeName == triangleType)
         return calColor(hit);
     else
-        return vec3(0, 0, 0);
+        return vec3(0.0f, 0.0f, 0.0f);
 }
 
 vec3 recRayTracing(Ray ray, int depth){
     if (depth == maxdepth)
-        return vec3(0, 0, 0);
+        return vec3(0.0f, 0.0f, 0.0f);
 
     Hit *hit = Intersect(ray);
 
     if (!hit)
-        return vec3(0, 0, 0);
+        return vec3(0.0f, 0.0f, 0.0f);
 
     vec3 color = FindColor(hit);
 
@@ -126,9 +126,9 @@ vec3 recRayTracing(Ray ray, int depth){
 void saveScreenshot(string fname, vec3 *pix) {
   BYTE *pixels = new BYTE[3*width*height];
   for(int i=0; i<width*height; i++){
-      pixels[i*3] = (int)pix[i].x;
-      pixels[i*3+1] = (int)pix[i].y;
-      pixels[i*3+2] = (int)pix[i].z;
+      pixels[i*3] = (int)(pix[i].z * 255);
+      pixels[i*3+1] = (int)(pix[i].y * 255);
+      pixels[i*3+2] = (int)(pix[i].x * 255);
   }
 
   FIBITMAP *img = FreeImage_ConvertFromRawBits(pixels, width, height, width * 3, 24, 0xFF0000, 0x00FF00, 0x0000FF, false);
@@ -156,10 +156,10 @@ int main(int argc, char* argv[]) {
         for (int j=0; j<width; j++){
             Ray ray = rayThruPixel(i, j);
             vec3 color = recRayTracing(ray, 0);
-            pixels[i*width+j] = color;
+            pixels[(height-i-1)*width+j] = color;
         }
     }
-    saveScreenshot(outname, pixels);
+    saveScreenshot(output, pixels);
 
     destroy();
     FreeImage_DeInitialise();

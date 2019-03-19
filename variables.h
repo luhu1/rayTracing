@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 #include "object.hpp"
 #include "ray.hpp"
 
@@ -23,8 +24,16 @@ vec3 center(0.0,0.0,0.0) ; // Center look at point
 int maxdepth = 1;   // maximum recursive depth
 int width = 500, height = 500 ; // width and height
 float fovy = 90.0 ; // For field of view
-std::string outname = "output.png";
+std::string output = "output.png";
 vec3 attenuation = vec3(1.0f, 0.0f, 0.0f);
+
+// Materials (read from file)
+// With multiple objects, these are colors for each.
+vec3 ambient = vec3(0.0f, 0.0f, 0.0f);
+vec3 diffuse = vec3(0.0f, 0.0f, 0.0f);;
+vec3 specular = vec3(0.0f, 0.0f, 0.0f);;
+vec3 emission = vec3(0.0f, 0.0f, 0.0f);;
+float shininess = 1.0f;
 #else
 EXTERN vec3 eyeinit ;
 EXTERN vec3 upinit ;
@@ -32,8 +41,16 @@ EXTERN vec3 center ;
 EXTERN int maxdepth;
 EXTERN int width, height ;
 EXTERN float fovy ;
-EXTERN std::string outname;
+EXTERN std::string output;
 EXTERN vec3 attenuation;
+
+// Materials (read from file)
+// With multiple objects, these are colors for each.
+EXTERN vec3 ambient ;
+EXTERN vec3 diffuse ;
+EXTERN vec3 specular ;
+EXTERN vec3 emission ;
+EXTERN float shininess ;
 #endif
 
 EXTERN mat4 projection, modelview; // The mvp matrices
@@ -54,13 +71,7 @@ EXTERN std::vector <vec3> ptlightransf; // Point Lights transformed by modelview
 EXTERN int maxverts;
 EXTERN std::vector <vec3> vertices;
 
-// Materials (read from file)
-// With multiple objects, these are colors for each.
-EXTERN vec3 ambient ;
-EXTERN vec3 diffuse ;
-EXTERN vec3 specular ;
-EXTERN vec3 emission ;
-EXTERN float shininess ;
+
 
 EXTERN std::vector <Object*> objects;
 

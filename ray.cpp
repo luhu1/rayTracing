@@ -135,6 +135,9 @@ void TriangleIntersection(Ray ray, Triangle *tri, std::vector<Hit*>& hitList){
     vec3 v3 = tri->v3;
 
     vec3 n = glm::normalize(glm::cross((v3-v1),(v2-v1)));
+    if (glm::dot(n, ray.p1) > 0){
+        n *= -1;
+    }
     if (glm::dot(ray.p1,n) == 0)
         return; // parallel to the plane
 
