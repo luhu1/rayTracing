@@ -3,6 +3,7 @@
 # I know it's not the most exciting of scenes...
 
 size 640 480 
+output scene3.png
 
 camera 0 -4 4 0 -1 0 0 1 1 45
 
@@ -94,8 +95,9 @@ pushTransform
 translate +1.75 +.8 -.25
 translate 0 0 -2.0 
 scale 0.15 0.15 2.0 
+rotate 1 0 0 45
 tri 0 1 5 
-tri 0 5 4 
+tri 0 5 4 11
 tri 3 7 6
 tri 3 6 2
 tri 1 2 6

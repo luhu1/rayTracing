@@ -4,8 +4,11 @@
 #include <sstream>
 #include <deque>
 #include <stack>
+#include <cstring>
 
+#include <glm/gtx/string_cast.hpp>
 #include "Transform.h"
+#include "utils.hpp"
 
 using namespace std;
 #include "variables.h"
@@ -30,7 +33,7 @@ void rightmultiply(const mat4 & M, stack<mat4> &transfstack)
 }
 
 void vectransform(vec3 &point, mat4 M){
-    vec4 p = vec4(point.x, point.y, point.z, 1.0f);
+    glm::vec4 p = vec4(point.x, point.y, point.z, 1.0f);
     p = M * p;
     point = vec3(p.x/p.w, p.y/p.w, p.z/p.w);
 }
@@ -131,43 +134,12 @@ void readfile(const char* filename)
         } else if (cmd == "camera") {
           validinput = readvals(s,10,values); // 10 values eye cen up fov
           if (validinput) {
-
-            // YOUR CODE FOR HW 2 HERE
-            // Use all of values[0...9]
-            // You may need to use the upvector fn in Transform.cpp
-            // to set up correctly.
-            // Set eyeinit upinit center fovy in variables.h
             eyeinit = vec3(values[0], values[1], values[2]);
             center = vec3(values[3], values[4], values[5]);
             upinit = vec3(values[6], values[7], values[8]);
             upinit = Transform::upvector(upinit, eyeinit-center);
             fovy = values[9];
           }
-        }
-
-        // I've left the code for loading objects in the skeleton, so
-        // you can get a sense of how this works.
-        // Also look at demo.txt to get a sense of why things are done this way.
-        else if (cmd == "sphere") {
-            validinput = readvals(s,4,values);
-        if (validinput) {
-            Sphere *s = new Sphere();
-            s->typeName = sphereType;
-            s->center = vec3(values[0], values[1], values[2]);
-            s->radius = values[3];
-
-            // Set the object's light properties
-            s->ambient = vec3(ambient);
-            s->diffuse = vec3(diffuse);
-            s->specular = vec3(specular);
-            s->emission = vec3(emission);
-            s->shininess = float(shininess);
-
-            // Set the object's transform
-            s->transform = transfstack.top();
-            vectransform(s->center, s->transform);
-            objects.push_back(s);
-            }
         }
 
         else if (cmd == "translate") {
@@ -268,9 +240,9 @@ void readfile(const char* filename)
             if (validinput) {
                 Triangle *tri = new Triangle();
                 tri->typeName = triangleType;
-                tri->v1 = vertices[(int)values[0]];
-                tri->v2 = vertices[(int)values[1]];
-                tri->v3 = vertices[(int)values[2]];
+                tri->v1 = vec3(vertices[(int)values[0]]);
+                tri->v2 = vec3(vertices[(int)values[1]]);
+                tri->v3 = vec3(vertices[(int)values[2]]);
 
                 // Set the object's light properties
                 tri->ambient = vec3(ambient);
@@ -279,12 +251,30 @@ void readfile(const char* filename)
                 tri->emission = vec3(emission);
                 tri->shininess = float(shininess);
 
-
                 tri->transform = transfstack.top();
                 vectransform(tri->v1, tri->transform);
                 vectransform(tri->v2, tri->transform);
                 vectransform(tri->v3, tri->transform);
                 objects.push_back(tri);
+            }
+        }
+
+        else if (cmd == "sphere") {
+            validinput = readvals(s,4,values);
+        if (validinput) {
+            Sphere *s = new Sphere();
+            s->typeName = sphereType;
+            s->center = vec3(values[0], values[1], values[2]);
+            s->radius = values[3];
+
+            s->ambient = vec3(ambient);
+            s->diffuse = vec3(diffuse);
+            s->specular = vec3(specular);
+            s->emission = vec3(emission);
+            s->shininess = float(shininess);
+
+            s->transform = transfstack.top();
+            objects.push_back(s);
             }
         }
 

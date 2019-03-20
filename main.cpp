@@ -4,8 +4,10 @@
 #include <sstream>
 #include <deque>
 #include <stack>
+#include <glm/gtx/string_cast.hpp>
 
 #include "Transform.h"
+#include "utils.hpp"
 #include <FreeImage.h>
 
 using namespace std;
@@ -24,7 +26,6 @@ void reshape(){
 
 
 void init(){
-
 }
 
 void destroy(){

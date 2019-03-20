@@ -24,6 +24,8 @@ readfile.o: readfile.cpp readfile.h variables.h
 	$(CC) $(CFLAGS) $(INCFLAGS) -c readfile.cpp
 Transform.o: Transform.cpp Transform.h
 	$(CC) $(CFLAGS) $(INCFLAGS) -c Transform.cpp
+# utils.o: utils.cpp utils.hpp
+# 	$(CC) $(CFLAGS) $(INCFLAGS) -c utils.cpp
 # display.o: display.cpp display.hpp variables.h Transform.h readfile.h
 # 	$(CC) $(CFLAGS) $(INCFLAGS) -c display.cpp
 clean:

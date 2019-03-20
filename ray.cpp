@@ -1,4 +1,12 @@
 #include "variables.h"
+#include <glm/gtx/string_cast.hpp>
+
+
+vec3 vectransform2(vec3 point, mat4 M){
+    glm::vec4 p = glm::vec4(point.x, point.y, point.z, 1.0f);
+    p = M * p;
+    return vec3(p.x/p.w, p.y/p.w, p.z/p.w);
+}
 
 
 int lightVisility(vec3 pos, vec3 lightpos, bool isPtLight){
@@ -89,40 +97,56 @@ Hit * Intersect(Ray ray){
 
 void SphereIntersection (Ray ray, Sphere *s, std::vector<Hit*>& hitList){
 
+    vec3 p0 = vec3(ray.p0);
+    vec3 p1 = vec3(ray.p1);
+
+    s->transform = glm::transpose(s->transform);
+    mat4 inv = glm::inverse(s->transform);
+
+
+    p0 = vectransform2(p0, inv);
+    p1 = vectransform2(p1, inv);
+    Ray ray2 = Ray(p0, p1);
+
     vec3 center = s->center;
-    float a = glm::dot(ray.p1,ray.p1);
-    float b = 2 * glm::dot(ray.p1 , (ray.p0 - center));
-    float c = glm::dot((ray.p0 - center),(ray.p0 - center)) - pow(s->radius,2);
-    float discriminant = pow(b,2) - 4 * a * c;
+    float a = glm::dot(p1, p1);
+    float b = 2 * glm::dot(p1 , (p0 - center));
+    float c = glm::dot((p0 - center),(p0 - center)) - pow(s->radius,2);
+    float discriminant = b * b - 4 * a * c;
 
-
+    float t;
     if (discriminant >= 0){
-        float t = (-b + sqrt(discriminant)) / (2 * a);
+        // std::cout << discriminant << std::endl;
+        t = (-b + sqrt(discriminant)) / (2 * a);
         if (t > 0){
-            vec3 point = ray.rayPath(t);
-            vec3 n = glm::normalize(point-center);
+            vec3 point = ray2.rayPath(t);
+            vec3 n = point-center;
+            n = vectransform2(n, transpose(s->transform));
+            n = glm::normalize(n);
 
             Hit *h = new Hit();
             h->t = t;
             h->normal = n;
             h->obj = s;
-            h->p = point;
+            h->p = ray.rayPath(t);
             hitList.push_back(h);
         }
+    }
 
-        if (discriminant > 0){
-            t = (-b - sqrt(discriminant)) / (2 * a);
-            if (t > 0){
-                vec3 point = ray.rayPath(t);
-                vec3 n = glm::normalize(point-center);
+    if (discriminant > 0){
+        t = (-b - sqrt(discriminant)) / (2 * a);
+        if (t > 0){
+            vec3 point = ray2.rayPath(t);
+            vec3 n = point-center;
+            n = vectransform2(n, transpose(s->transform));
+            n = glm::normalize(n);
 
-                Hit *h = new Hit();
-                h->t = t;
-                h->normal = n;
-                h->obj = s;
-                h->p = point;
-                hitList.push_back(h);
-            }
+            Hit *h = new Hit();
+            h->t = t;
+            h->normal = n;
+            h->obj = s;
+            h->p = ray.rayPath(t);
+            hitList.push_back(h);
         }
     }
 }

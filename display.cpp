@@ -12,20 +12,28 @@
 #include <sstream>
 #include <deque>
 #include <stack>
-
+// OSX systems require different headers
+#ifdef __APPLE__
+#include <OpenGL/gl3.h>
+#include <OpenGL/glext.h>
+#include <GLUT/glut.h>
+#else
+#include <GL/glew.h>
+#include <GL/glut.h>
+#endif
 #include "Transform.h"
+#include "Geometry.h"
 
 using namespace std ;
 #include "variables.h"
 #include "readfile.h"
-#include "display.hpp"
 
 // New helper transformation function to transform vector by modelview
 // May be better done using newer glm functionality.
 // Provided for your convenience.  Use is optional.
 // Some of you may want to use the more modern routines in readfile.cpp
 // that can also be used.
-void transformvec (const float input[4], float output[4])
+void transformvec (const GLfloat input[4], GLfloat output[4])
 {
   glm::vec4 inputvec(input[0], input[1], input[2], input[3]);
   glm::vec4 outputvec = modelview * inputvec;
@@ -35,94 +43,93 @@ void transformvec (const float input[4], float output[4])
   output[3] = outputvec[3];
 }
 
-// void display()
-// {
-//     modelview = Transform::lookAt(eye,center,up);
-//
-//     for(int i=0; i<dirlightposn.size(); i++)
-//         transformvec(lightposn+i*4, lightransf+i*4);
-//
-//   // Transformations for objects, involving translation and scaling
-//   mat4 sc(1.0) , tr(1.0), transf(1.0);
-//   sc = Transform::scale(sx,sy,1.0);
-//   tr = Transform::translate(tx,ty,0.0);
-//
-//   transf = modelview * tr * sc;
-//
-//   modelview = transf;
-//
-//   for (int i = 0 ; i < numobjects ; i++) {
-//     object* obj = &(objects[i]); // Grabs an object struct.
-//
-//     modelview = transf * obj->transform;
-//
-//
-//     // Actually draw the object
-//     // We provide the actual drawing functions for you.
-//     // Remember that obj->type is notation for accessing struct fields
-//     // if (obj->type == cube) {
-//     //   solidCube(obj->size);
-//     // }
-//     // else if (obj->type == sphere) {
-//     //   const int tessel = 20;
-//     //   solidSphere(obj->size, tessel, tessel);
-//     // }
-//     // else if (obj->type == teapot) {
-//     //   solidTeapot(obj->size);
-//     // }
-//   }
-// }
+void display()
+{
+     // glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+
+  glClearColor(0, 0, 1, 0);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  // Either use the built-in lookAt function or the lookAt implemented by the user.
+  if (useGlu) {
+    modelview = glm::lookAt(eye,center,up);
+  } else {
+    modelview = Transform::lookAt(eye,center,up);
+  }
+  glUniformMatrix4fv(modelviewPos, 1, GL_FALSE, &modelview[0][0]);
+
+  // Lights are transformed by current modelview matrix.
+  // The shader can't do this globally.
+  // So we need to do so manually.
+  if (numused) {
+    glUniform1i(enablelighting,true);
+
+    // YOUR CODE FOR HW 2 HERE.
+    // You need to pass the light positions and colors to the shader.
+    // glUniform4fv() and similar functions will be useful. See FAQ for help with these functions.
+    // The lightransf[] array in variables.h and transformvec() might also be useful here.
+    // Remember that light positions must be transformed by modelview.
+
+    glUniform1i(numusedcol, numused);
+
+    for(int i=0; i<numused; i++)
+        transformvec(lightposn+i*4, lightransf+i*4);
+
+    glUniform4fv(lightcol, numused, lightcolor);
+    glUniform4fv(lightpos, numused, lightransf);
+
+  } else {
+    glUniform1i(enablelighting,false);
+  }
+
+  // Transformations for objects, involving translation and scaling
+  mat4 sc(1.0) , tr(1.0), transf(1.0);
+  sc = Transform::scale(sx,sy,1.0);
+  tr = Transform::translate(tx,ty,0.0);
+
+  // YOUR CODE FOR HW 2 HERE.
+  // You need to use scale, translate and modelview to
+  // set up the net transformation matrix for the objects.
+  // Account for GLM issues, matrix order, etc.
+  transf = modelview * tr * sc;
 
 
-vec3 ComputeLight (const vec3 direction, const vec3 lightcolor, const vec3 normal, const vec3 halfvec, const vec3 mydiffuse, const vec3 myspecular, const float myshininess) {
+  // The object draw functions will need to further modify the top of the stack,
+  // so assign whatever transformation matrix you intend to work with to modelview
+  // rather than use a uniform variable for that.
+  modelview = transf;
 
-    float nDotL = dot(normal, direction)  ;
-    vec3 lambert = mydiffuse * lightcolor * max (nDotL, 0.0) ;
+  for (int i = 0 ; i < numobjects ; i++) {
+    object* obj = &(objects[i]); // Grabs an object struct.
 
-    float nDotH = dot(normal, halfvec) ;
-    vec3 phong = myspecular * lightcolor * pow (max(nDotH, 0.0), myshininess) ;
+    // YOUR CODE FOR HW 2 HERE.
+    // Set up the object transformations
+    // And pass in the appropriate material properties
+    // Again glUniform() related functions will be useful
+    modelview = transf * obj->transform;
+    //glUniformMatrix4fv(modelviewPos, 1, GL_FALSE, &mvp[0][0]);
 
-    vec3 retval = lambert + phong ;
-    return retval ;
+    glUniform4fv(ambientcol,1,obj->ambient);
+    glUniform4fv(diffusecol,1,obj->diffuse);
+    glUniform4fv(specularcol,1,obj->specular);
+    glUniform4fv(emissioncol,1,obj->emission);
+    glUniform1f(shininesscol, shininess);
+
+
+    // Actually draw the object
+    // We provide the actual drawing functions for you.
+    // Remember that obj->type is notation for accessing struct fields
+    if (obj->type == cube) {
+      solidCube(obj->size);
     }
-
-
-vec3 calColor(vec3 normal, vec3 mypos){
-    vec3 finalcolor = vec3(0.0f, 0.0f, 0.0f);
-
-
-    // mat4 modelview( 1.0f );
-    // vec4 myvertex2 = modelview * myvertex;
-    // vec3 mypos = myvertex2.xyz / myvertex2.w ; // Dehomogenize current location
-
-    vec3 eyedirn = normalize(eye - mypos) ;
-
-    // Compute normal, needed for shading.
-    // vec3 mynormal2 =  mat3(transpose(inverse(modelview))) * mynormal ;
-    // vec3 normal = normalize(mynormal2) ;
-
-    finalcolor = ambient;
-    vec3 col;
-
-    // Directional lights
-    for (int i=0; i<dirlightposn.size(); i++){
-        vec3 direction = normalize (dirlightposn[i]) ;
-        vec3 half1 = normalize (direction + eyedirn) ;
-        col = ComputeLight(direction, dirlightcolor[i], normal, half1, diffuse, specular, shininess) ;
-        finalcolor += col;
+    else if (obj->type == sphere) {
+      const int tessel = 20;
+      solidSphere(obj->size, tessel, tessel);
     }
-
-    // Point lights
-    for (int i=0; i<ptlightposn.size(); i++){
-        vec3 position = ptlightposn[i];
-        vec3 direction = normalize (position - mypos) ;
-        vec3 half1 = normalize (direction + eyedirn) ;
-        col = ComputeLight(direction, ptlightcolor[i], normal, half1, diffuse, specular, shininess) ;
-        finalcolor += col;
+    else if (obj->type == teapot) {
+      solidTeapot(obj->size);
     }
+  }
 
-
-    // finalcolor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
-    fragColor = finalcolor;
-    return fragColor
+  glutSwapBuffers();
 }
