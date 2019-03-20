@@ -134,7 +134,7 @@ void readfile(const char* filename)
             float ty = values[1];
             float tz = values[2];
 
-            mat4 T = Transform::translate(tx, ty, tz);
+            mat4 T = glm::translate(mat4(), vec3(tx, ty, tz));
             rightmultiply(T, transfstack);
 
           }
@@ -146,7 +146,7 @@ void readfile(const char* filename)
             float sy = values[1];
             float sz = values[2];
 
-            mat4 S = Transform::scale(sx, sy, sz);
+            mat4 S = glm::scale(mat4(), vec3(sx, sy, sz));
             rightmultiply(S, transfstack);
 
           }
@@ -161,8 +161,7 @@ void readfile(const char* filename)
             float degrees = values[3];
             degrees = degrees * M_PI / 180;
 
-            mat3 rot = Transform::rotate(degrees, axis);
-            mat4 R = mat4(rot);
+            mat4 R = glm::rotate(mat4(), degrees, axis);
             rightmultiply(R, transfstack);
           }
         }

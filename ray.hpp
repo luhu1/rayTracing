@@ -39,7 +39,7 @@ typedef struct Hit Hit;
 
 int lightVisility(vec3 pos, vec3 lightpos, bool isPtLight);
 vec3 calReflection(vec3 d, vec3 n);
-Ray rayThruPixel(int i, int j);
+Ray rayThruPixel(float i, float j);
 Hit * Intersect(Ray ray);
 void SphereIntersection (Ray ray, Sphere *s, std::vector<Hit*>& hitList);
 void TriangleIntersection(Ray ray, Triangle *tri, std::vector<Hit*>& hitList);
