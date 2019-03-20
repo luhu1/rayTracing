@@ -81,7 +81,7 @@ int main(int argc, char* argv[]) {
 
     for (int i=0; i<height; i++){
         for (int j=0; j<width; j++){
-            Ray ray = rayThruPixel(i, j);
+            Ray ray = rayThruPixel(i+0.5, j+0.5);
             vec3 color = recRayTracing(ray, 0);
             pixels[(height-i-1)*width+j] = color;
         }
