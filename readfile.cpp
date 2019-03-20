@@ -1,21 +1,5 @@
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <deque>
-#include <stack>
-#include <cstring>
-
-#include <glm/gtx/string_cast.hpp>
-#include "Transform.h"
-#include "utils.hpp"
-
-using namespace std;
-#include "variables.h"
 #include "readfile.h"
-#include "ray.hpp"
-#include "object.hpp"
-
+using namespace std;
 
 // The function below applies the appropriate transform to a 4-vector
 void matransform(stack<mat4> &transfstack, float* values)
@@ -134,10 +118,10 @@ void readfile(const char* filename)
         } else if (cmd == "camera") {
           validinput = readvals(s,10,values); // 10 values eye cen up fov
           if (validinput) {
-            eyeinit = vec3(values[0], values[1], values[2]);
+            eye = vec3(values[0], values[1], values[2]);
             center = vec3(values[3], values[4], values[5]);
-            upinit = vec3(values[6], values[7], values[8]);
-            upinit = Transform::upvector(upinit, eyeinit-center);
+            up = vec3(values[6], values[7], values[8]);
+            up = Transform::upvector(up, eye-center);
             fovy = values[9];
           }
         }
@@ -285,11 +269,6 @@ void readfile(const char* filename)
       getline (in, str);
     }
 
-    // Set up initial position for eye, up
-    // As well as booleans
-
-    eye = eyeinit;
-    up = upinit;
     sx = sy = 1.0;  // keyboard controlled scales in x and y
     tx = ty = 0.0;  // keyboard controllled translation in x and y
 

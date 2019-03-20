@@ -1,22 +1,5 @@
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <deque>
-#include <stack>
-#include <glm/gtx/string_cast.hpp>
-
-#include "Transform.h"
-#include "utils.hpp"
-#include <FreeImage.h>
-
+#include "main.hpp"
 using namespace std;
-
-// Main variables in the program.
-#define MAINPROGRAM
-#include "variables.h"
-#include "readfile.h"
-void display(void);
 
 // Reshapes the window
 void reshape(){
@@ -26,6 +9,21 @@ void reshape(){
 
 
 void init(){
+    eye = vec3(0.0,0.0,5.0);
+    up = vec3(0.0,1.0,0.0);
+    center = vec3(0.0,0.0,0.0);
+    maxdepth = 1;
+    width = 500, height = 500 ; // window width and height
+    fovy = 90.0 ; // For field of view
+    output = "output.png";
+    attenuation = vec3(1.0f, 0.0f, 0.0f);
+
+    // Materials
+    ambient = vec3(0.0f, 0.0f, 0.0f);
+    diffuse = vec3(0.0f, 0.0f, 0.0f);;
+    specular = vec3(0.0f, 0.0f, 0.0f);;
+    emission = vec3(0.0f, 0.0f, 0.0f);;
+    shininess = 1.0f;
 }
 
 void destroy(){

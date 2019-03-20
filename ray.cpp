@@ -133,7 +133,7 @@ void SphereIntersection (Ray ray, Sphere *s, std::vector<Hit*>& hitList){
         }
     }
 
-    if (discriminant > 0){
+    if (discriminant > 0.1){
         t = (-b - sqrt(discriminant)) / (2 * a);
         if (t > 0){
             vec3 point = ray2.rayPath(t);

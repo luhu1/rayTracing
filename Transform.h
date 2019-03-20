@@ -1,7 +1,5 @@
-// Transform header file to define the interface.
-// The class is all static for simplicity
-// You need to implement left, up and lookAt
-// Rotate is a helper function
+#ifndef TRANSFORM_H
+#define TRANSFORM_H
 
 // Include the helper glm library, including matrix transform extensions
 #ifndef GLM_FORCE_RADIANS
@@ -34,3 +32,5 @@ public:
     static mat4 translate(const float &tx, const float &ty, const float &tz);
     static vec3 upvector(const vec3 &up, const vec3 &zvec) ;
 };
+
+#endif
