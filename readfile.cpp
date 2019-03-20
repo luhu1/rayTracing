@@ -269,9 +269,6 @@ void readfile(const char* filename)
       getline (in, str);
     }
 
-    sx = sy = 1.0;  // keyboard controlled scales in x and y
-    tx = ty = 0.0;  // keyboard controllled translation in x and y
-
   } else {
     cerr << "Unable to Open Input Data File " << filename << "\n";
     throw 2;

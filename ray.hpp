@@ -4,8 +4,12 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/string_cast.hpp>
 typedef glm::vec3 vec3 ;
+typedef glm::vec4 vec4 ;
 typedef glm::mat4 mat4 ;
+
+#include "variables.h"
 
 class Ray{
 public:
@@ -33,7 +37,6 @@ struct Hit {
 typedef struct Hit Hit;
 
 
-// void recRayTracing(Ray ray, int depth);
 int lightVisility(vec3 pos, vec3 lightpos, bool isPtLight);
 vec3 calReflection(vec3 d, vec3 n);
 Ray rayThruPixel(int i, int j);

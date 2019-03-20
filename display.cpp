@@ -1,135 +1,76 @@
-/*****************************************************************************/
-/* This is the program skeleton for homework 2 in CSE167 by Ravi Ramamoorthi */
-/* Extends HW 1 to deal with shading, more transforms and multiple objects   */
-/*****************************************************************************/
+#include "display.hpp"
+using namespace std;
 
-// This file is display.cpp.  It includes the skeleton for the display routine
 
-// Basic includes to get this file to work.
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <deque>
-#include <stack>
-// OSX systems require different headers
-#ifdef __APPLE__
-#include <OpenGL/gl3.h>
-#include <OpenGL/glext.h>
-#include <GLUT/glut.h>
-#else
-#include <GL/glew.h>
-#include <GL/glut.h>
-#endif
-#include "Transform.h"
-#include "Geometry.h"
+vec3 ComputeLight (const vec3 direction, const vec3 lightcolor, const vec3 normal, const vec3 halfvec, const vec3 diffuse, const vec3 specular, const float shininess) {
 
-using namespace std ;
-#include "variables.h"
-#include "readfile.h"
+    float nDotL = dot(normal, direction)  ;
+    vec3 lambert = diffuse * lightcolor * max (nDotL, 0.0f) ;
 
-// New helper transformation function to transform vector by modelview
-// May be better done using newer glm functionality.
-// Provided for your convenience.  Use is optional.
-// Some of you may want to use the more modern routines in readfile.cpp
-// that can also be used.
-void transformvec (const GLfloat input[4], GLfloat output[4])
-{
-  glm::vec4 inputvec(input[0], input[1], input[2], input[3]);
-  glm::vec4 outputvec = modelview * inputvec;
-  output[0] = outputvec[0];
-  output[1] = outputvec[1];
-  output[2] = outputvec[2];
-  output[3] = outputvec[3];
+    float nDotH = dot(normal, halfvec) ;
+    vec3 phong = specular * lightcolor * pow (max(nDotH, 0.0f), shininess) ;
+
+    vec3 retval = lambert + phong ;
+    return retval ;
+    }
+
+
+float calAttenuation(float dist){
+    float v = attenuation[0] + attenuation[1] * dist + attenuation[2] * dist * dist;
+    return 1.0f / v;
 }
 
-void display()
-{
-     // glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
-  glClearColor(0, 0, 1, 0);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+vec3 calColor(Hit *hit){
+    vec3 normal = hit->normal;
+    vec3 mypos = hit->p;
+    vec3 ambient = hit->obj->ambient;
+    vec3 diffuse = hit->obj->diffuse;
+    vec3 specular = hit->obj->specular;
+    vec3 emission = hit->obj->emission;
+    float shininess = hit->obj->shininess;
 
-  // Either use the built-in lookAt function or the lookAt implemented by the user.
-  if (useGlu) {
-    modelview = glm::lookAt(eye,center,up);
-  } else {
-    modelview = Transform::lookAt(eye,center,up);
-  }
-  glUniformMatrix4fv(modelviewPos, 1, GL_FALSE, &modelview[0][0]);
+    vec3 fragColor = vec3(0.0f, 0.0f, 0.0f);
+    vec3 eyedirn = normalize(eye - mypos) ;
 
-  // Lights are transformed by current modelview matrix.
-  // The shader can't do this globally.
-  // So we need to do so manually.
-  if (numused) {
-    glUniform1i(enablelighting,true);
+    fragColor = ambient + emission;
+    vec3 col;
 
-    // YOUR CODE FOR HW 2 HERE.
-    // You need to pass the light positions and colors to the shader.
-    // glUniform4fv() and similar functions will be useful. See FAQ for help with these functions.
-    // The lightransf[] array in variables.h and transformvec() might also be useful here.
-    // Remember that light positions must be transformed by modelview.
+    // Directional lights
+    for (int i=0; i<dirlightposn.size(); i++){
+        vec3 direction = normalize (dirlightposn[i]) ;
+        vec3 half1 = normalize (direction + eyedirn) ;
 
-    glUniform1i(numusedcol, numused);
-
-    for(int i=0; i<numused; i++)
-        transformvec(lightposn+i*4, lightransf+i*4);
-
-    glUniform4fv(lightcol, numused, lightcolor);
-    glUniform4fv(lightpos, numused, lightransf);
-
-  } else {
-    glUniform1i(enablelighting,false);
-  }
-
-  // Transformations for objects, involving translation and scaling
-  mat4 sc(1.0) , tr(1.0), transf(1.0);
-  sc = Transform::scale(sx,sy,1.0);
-  tr = Transform::translate(tx,ty,0.0);
-
-  // YOUR CODE FOR HW 2 HERE.
-  // You need to use scale, translate and modelview to
-  // set up the net transformation matrix for the objects.
-  // Account for GLM issues, matrix order, etc.
-  transf = modelview * tr * sc;
-
-
-  // The object draw functions will need to further modify the top of the stack,
-  // so assign whatever transformation matrix you intend to work with to modelview
-  // rather than use a uniform variable for that.
-  modelview = transf;
-
-  for (int i = 0 ; i < numobjects ; i++) {
-    object* obj = &(objects[i]); // Grabs an object struct.
-
-    // YOUR CODE FOR HW 2 HERE.
-    // Set up the object transformations
-    // And pass in the appropriate material properties
-    // Again glUniform() related functions will be useful
-    modelview = transf * obj->transform;
-    //glUniformMatrix4fv(modelviewPos, 1, GL_FALSE, &mvp[0][0]);
-
-    glUniform4fv(ambientcol,1,obj->ambient);
-    glUniform4fv(diffusecol,1,obj->diffuse);
-    glUniform4fv(specularcol,1,obj->specular);
-    glUniform4fv(emissioncol,1,obj->emission);
-    glUniform1f(shininesscol, shininess);
-
-
-    // Actually draw the object
-    // We provide the actual drawing functions for you.
-    // Remember that obj->type is notation for accessing struct fields
-    if (obj->type == cube) {
-      solidCube(obj->size);
+        if (lightVisility(mypos, dirlightposn[i], false)){
+            col = ComputeLight(direction, dirlightcolor[i], normal, half1, diffuse, specular, shininess) ;
+            fragColor += col;
+        }
     }
-    else if (obj->type == sphere) {
-      const int tessel = 20;
-      solidSphere(obj->size, tessel, tessel);
-    }
-    else if (obj->type == teapot) {
-      solidTeapot(obj->size);
-    }
-  }
 
-  glutSwapBuffers();
+    // Point lights
+    for (int i=0; i<ptlightposn.size(); i++){
+        vec3 position = ptlightposn[i];
+        vec3 direction = normalize (position - mypos) ;
+        vec3 half1 = normalize (direction + eyedirn) ;
+
+        if (lightVisility(mypos, position, true)){
+            col = ComputeLight(direction, ptlightcolor[i], normal, half1, diffuse, specular, shininess) ;
+            float attn = calAttenuation(distance(mypos, ptlightcolor[i]));
+            fragColor += attn * col;
+        }
+    }
+
+    return fragColor;
+}
+
+
+vec3 FindColor (Hit *hit){
+    if (!hit)
+        return vec3(0.0f, 0.0f, 0.0f);
+    else if (hit->obj->typeName == sphereType)
+        return calColor(hit);
+    else if (hit->obj->typeName == triangleType)
+        return calColor(hit);
+    else
+        return vec3(0.0f, 0.0f, 0.0f);
 }

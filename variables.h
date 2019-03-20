@@ -25,9 +25,6 @@ extern vec3 emission ;
 extern float shininess ;
 
 extern mat4 projection, modelview; // The mvp matrices
-extern float sx, sy ; // the scale in x and y
-extern float tx, ty ; // the translation in x and y
-
 
 extern std::vector <vec3> dirlightposn; // Directional Light Positions
 extern std::vector <vec3> dirlightcolor; // Directional Light Colors

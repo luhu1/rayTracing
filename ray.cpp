@@ -1,5 +1,4 @@
-#include "variables.h"
-#include <glm/gtx/string_cast.hpp>
+#include "ray.hpp"
 
 
 vec3 vectransform2(vec3 point, mat4 M){

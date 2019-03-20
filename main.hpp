@@ -18,6 +18,7 @@ typedef glm::mat4 mat4 ;
 #include "readfile.h"
 #include "object.hpp"
 #include "ray.hpp"
+#include "display.hpp"
 
  vec3 eye ;
  vec3 up ;
@@ -36,9 +37,6 @@ typedef glm::mat4 mat4 ;
  float shininess ;
 
  mat4 projection, modelview; // The mvp matrices
- float sx, sy ; // the scale in x and y
- float tx, ty ; // the translation in x and y
-
 
  std::vector <vec3> dirlightposn; // Directional Light Positions
  std::vector <vec3> dirlightcolor; // Directional Light Colors
@@ -56,9 +54,5 @@ typedef glm::mat4 mat4 ;
 
 void init();
 void destroy();
-vec3 ComputeLight (const vec3 direction, const vec3 lightcolor, const vec3 normal, const vec3 halfvec, const vec3 diffuse, const vec3 specular, const float shininess);
-float calAttenuation(float dist);
-vec3 calColor(Hit *hit);
-vec3 FindColor (Hit *hit);
 vec3 recRayTracing(Ray ray, int depth);
 void saveScreenshot(std::string fname, vec3 *pix);
