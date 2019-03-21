@@ -15,6 +15,5 @@ typedef glm::mat4 mat4 ;
 vec3 ComputeLight (const vec3 direction, const vec3 lightcolor, const vec3 normal, const vec3 halfvec, const vec3 diffuse, const vec3 specular, const float shininess);
 float calAttenuation(float dist);
 vec3 calColor(Hit *hit);
-vec3 FindColor (Hit *hit);
 
 #endif

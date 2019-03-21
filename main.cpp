@@ -44,11 +44,11 @@ vec3 recRayTracing(Ray ray, int depth){
     if (!hit)
         return vec3(0.0f, 0.0f, 0.0f);
 
-    vec3 color = FindColor(hit);
+    vec3 color = calColor(hit);
 
     vec3 dir = calReflection(ray.p1, hit->normal);
     Ray ray2 = Ray(hit->p, dir);
-    return color + recRayTracing(ray2, depth+1);
+    return color + hit->obj->specular * recRayTracing(ray2, depth+1);
 }
 
 

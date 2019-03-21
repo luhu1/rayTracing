@@ -67,15 +67,3 @@ vec3 calColor(Hit *hit){
 
     return fragColor;
 }
-
-
-vec3 FindColor (Hit *hit){
-    if (!hit)
-        return vec3(0.0f, 0.0f, 0.0f);
-    else if (hit->obj->typeName == sphereType)
-        return calColor(hit);
-    else if (hit->obj->typeName == triangleType)
-        return calColor(hit);
-    else
-        return vec3(0.0f, 0.0f, 0.0f);
-}
