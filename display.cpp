@@ -59,7 +59,7 @@ vec3 calColor(Hit *hit){
 
             if (lightVisibility(mypos, lights[i])){
                 col = ComputeLight(direction, lights[i]->color, normal, half1, diffuse, specular, shininess) ;
-                float attn = calAttenuation(distance(mypos, lights[i]->color));
+                float attn = calAttenuation(distance(mypos, lights[i]->pos));
                 fragColor += attn * col;
             }
         }

@@ -1,5 +1,5 @@
 #include "ray.hpp"
-
+using namespace std;
 
 vec3 vectransform2(vec3 point, mat4 M){
     glm::vec4 p = glm::vec4(point.x, point.y, point.z, 1.0f);
@@ -15,7 +15,7 @@ vec3 vectransform3(vec3 point, mat4 M){
 
 
 int lightVisibility(vec3 pos, Light *light){
-    std::vector <Hit*> hitList;
+    vector <Hit*> hitList;
     vec3 dir;
 
     if (light->typeName == pointType){
@@ -43,6 +43,7 @@ int lightVisibility(vec3 pos, Light *light){
 
     for (int i=0; i<hitList.size(); i++){
         if(light->typeName == directionalType){
+            // cout << hitList[i]->t << endl;
             return 0;
         }
         else if (light->typeName == pointType){
@@ -83,7 +84,7 @@ Ray rayThruPixel(float i, float j){
 
 
 Hit * Intersect(Ray ray){
-    std::vector <Hit*> hitList;
+    vector <Hit*> hitList;
 
     for (int i=0; i<objects.size(); i++){
         if (objects[i]->typeName == sphereType){
@@ -111,7 +112,7 @@ Hit * Intersect(Ray ray){
 }
 
 
-void SphereIntersection (Ray ray, Sphere *s, std::vector<Hit*>& hitList){
+void SphereIntersection (Ray ray, Sphere *s, vector<Hit*>& hitList){
 
     vec3 p0 = vec3(ray.p0);
     vec3 p1 = vec3(ray.p1);
@@ -129,7 +130,7 @@ void SphereIntersection (Ray ray, Sphere *s, std::vector<Hit*>& hitList){
 
     float t;
     if (discriminant > 0){
-        // std::cout << discriminant << std::endl;
+        // cout << discriminant << endl;
         t = (-b + sqrt(discriminant)) / (2 * a);
         if (t > epsilon){
             vec3 point = ray2.rayPath(t);
