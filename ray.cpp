@@ -14,7 +14,7 @@ vec3 vectransform3(vec3 point, mat4 M){
 }
 
 
-int lightVisility(vec3 pos, Light *light){
+int lightVisibility(vec3 pos, Light *light){
     std::vector <Hit*> hitList;
     vec3 dir;
 

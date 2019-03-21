@@ -37,7 +37,7 @@ struct Hit {
 typedef struct Hit Hit;
 
 
-int lightVisility(vec3 pos, Light *light);
+int lightVisibility(vec3 pos, Light *light);
 vec3 calReflection(vec3 d, vec3 n);
 Ray rayThruPixel(float i, float j);
 Hit * Intersect(Ray ray);
