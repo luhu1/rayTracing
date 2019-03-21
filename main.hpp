@@ -28,6 +28,7 @@ int maxdepth;
 int width, height ;
 float fovy ;
 std::string output;
+float epsilon;
 
 mat4 projection, modelview; // The mvp matrices
 

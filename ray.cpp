@@ -117,10 +117,10 @@ void SphereIntersection (Ray ray, Sphere *s, std::vector<Hit*>& hitList){
     float discriminant = b * b - 4 * a * c;
 
     float t;
-    if (discriminant >= 0){
+    if (discriminant > 0){
         // std::cout << discriminant << std::endl;
         t = (-b + sqrt(discriminant)) / (2 * a);
-        if (t > 0){
+        if (t > epsilon){
             vec3 point = ray2.rayPath(t);
             vec3 n = point-center;
             n = vectransform3(n, transpose(inv));
@@ -135,9 +135,9 @@ void SphereIntersection (Ray ray, Sphere *s, std::vector<Hit*>& hitList){
         }
     }
 
-    if (discriminant > 0.1){
+    if (discriminant > epsilon){
         t = (-b - sqrt(discriminant)) / (2 * a);
-        if (t > 0){
+        if (t > epsilon){
             vec3 point = ray2.rayPath(t);
             vec3 n = point-center;
             n = vectransform3(n, transpose(inv));
@@ -153,46 +153,6 @@ void SphereIntersection (Ray ray, Sphere *s, std::vector<Hit*>& hitList){
     }
 }
 
-// void SphereIntersection (Ray ray, Sphere *s, std::vector<Hit*>& hitList){
-//
-//     vec3 center = s->center;
-//     float a = glm::dot(ray.p1,ray.p1);
-//     float b = 2 * glm::dot(ray.p1 , (ray.p0 - center));
-//     float c = glm::dot((ray.p0 - center),(ray.p0 - center)) - pow(s->radius,2);
-//     float discriminant = pow(b,2) - 4 * a * c;
-//
-//
-//     if (discriminant >= 0){
-//         float t = (-b + sqrt(discriminant)) / (2 * a);
-//         if (t > 0){
-//             vec3 point = ray.rayPath(t);
-//             vec3 n = glm::normalize(point-center);
-//
-//             Hit *h = new Hit();
-//             h->t = t;
-//             h->normal = n;
-//             h->obj = s;
-//             h->p = point;
-//             hitList.push_back(h);
-//         }
-//
-//         if (discriminant > 0){
-//             t = (-b - sqrt(discriminant)) / (2 * a);
-//             if (t > 0){
-//                 vec3 point = ray.rayPath(t);
-//                 vec3 n = glm::normalize(point-center);
-//
-//                 Hit *h = new Hit();
-//                 h->t = t;
-//                 h->normal = n;
-//                 h->obj = s;
-//                 h->p = point;
-//                 hitList.push_back(h);
-//             }
-//         }
-//     }
-// }
-
 
 void TriangleIntersection(Ray ray, Triangle *tri, std::vector<Hit*>& hitList){
 
@@ -204,11 +164,11 @@ void TriangleIntersection(Ray ray, Triangle *tri, std::vector<Hit*>& hitList){
     if (glm::dot(n, ray.p1) > 0){
         n *= -1;
     }
-    if (glm::dot(ray.p1,n) == 0)
+    if (fabs(glm::dot(ray.p1,n)) < epsilon)
         return; // parallel to the plane
 
     float t = (glm::dot(v1,n) - glm::dot(ray.p0,n)) / (glm::dot(ray.p1,n));
-    if (t <= 0)
+    if (t < epsilon)
         return; // Intersect behind the camera
 
     vec3 point = ray.p0 + ray.p1*t;
@@ -221,7 +181,7 @@ void TriangleIntersection(Ray ray, Triangle *tri, std::vector<Hit*>& hitList){
     float beta = glm::length(glm::cross(PC, PA)) / Area;
     float gamma = glm::length(glm::cross(PA, PB)) / Area;
 
-    if (alpha >= 0 && beta >= 0 && gamma >= 0 && fabs(alpha + beta + gamma - 1) <= 0.001){
+    if (fabs(alpha + beta + gamma - 1.0f) <= epsilon){
         Hit *h = new Hit();
         h->t = t;
         h->normal = n;

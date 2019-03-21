@@ -15,8 +15,9 @@ void init(){
     center = vec3(0.0,0.0,0.0);
     maxdepth = 1;
     width = 500, height = 500 ; // window width and height
-    fovy = 90.0 ; // For field of view
+    fovy = 90.0f; // For field of view
     output = "output.png";
+    epsilon = 0.01f;
     attenuation = vec3(1.0f, 0.0f, 0.0f);
 
     // Materials
@@ -47,7 +48,7 @@ vec3 recRayTracing(Ray ray, int depth){
     vec3 color = calColor(hit);
 
     vec3 dir = calReflection(ray.p1, hit->normal);
-    vec3 p0 = hit->p + dir * 0.1f;  // avoid numerical inaccuracy
+    vec3 p0 = hit->p + dir * epsilon;  // avoid numerical inaccuracy
     Ray ray2 = Ray(p0, dir);
     return color + hit->obj->specular * recRayTracing(ray2, depth+1);
 }

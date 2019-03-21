@@ -16,6 +16,7 @@ extern int maxdepth;
 extern int width, height ;
 extern float fovy ;
 extern std::string output;
+extern float epsilon;
 
 extern vec3 ambient;
 extern vec3 diffuse;
