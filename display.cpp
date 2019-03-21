@@ -25,38 +25,43 @@ vec3 calColor(Hit *hit){
     vec3 normal = hit->normal;
     vec3 mypos = hit->p;
     vec3 ambient = hit->obj->ambient;
-    vec3 diffuse = hit->obj->diffuse;
-    vec3 specular = hit->obj->specular;
     vec3 emission = hit->obj->emission;
     float shininess = hit->obj->shininess;
 
-    vec3 fragColor = vec3(0.0f, 0.0f, 0.0f);
+    vec3 diffuse, specular, col;
+    diffuse = hit->obj->diffuse;
+    specular = hit->obj-> specular;
+
+    vec3 fragColor = ambient + emission;
     vec3 eyedirn = normalize(eye - mypos) ;
+    // cout << glm::to_string(ambient) << endl;
 
-    fragColor = ambient + emission;
-    vec3 col;
+    for (int i=0; i<lights.size(); i++){
+        // diffuse = lights[i]->diffuse;
+        // specular = lights[i]-> specular;
 
-    // Directional lights
-    for (int i=0; i<dirlightposn.size(); i++){
-        vec3 direction = normalize (dirlightposn[i]) ;
-        vec3 half1 = normalize (direction + eyedirn) ;
+        // Directional lights
+        if (lights[i]->typeName == directionalType){
+            vec3 direction = normalize (lights[i]->pos) ;
+            vec3 half1 = normalize (direction + eyedirn) ;
 
-        if (lightVisility(mypos, dirlightposn[i], false)){
-            col = ComputeLight(direction, dirlightcolor[i], normal, half1, diffuse, specular, shininess) ;
-            fragColor += col;
+            if (lightVisility(mypos, direction, false)){
+                col = ComputeLight(direction, lights[i]->color, normal, half1, diffuse, specular, shininess) ;
+                fragColor += col;
+            }
         }
-    }
 
-    // Point lights
-    for (int i=0; i<ptlightposn.size(); i++){
-        vec3 position = ptlightposn[i];
-        vec3 direction = normalize (position - mypos) ;
-        vec3 half1 = normalize (direction + eyedirn) ;
+        // Point lights
+        else if (lights[i]->typeName == pointType){
+            vec3 position = lights[i]->pos;
+            vec3 direction = normalize (position - mypos) ;
+            vec3 half1 = normalize (direction + eyedirn) ;
 
-        if (lightVisility(mypos, position, true)){
-            col = ComputeLight(direction, ptlightcolor[i], normal, half1, diffuse, specular, shininess) ;
-            float attn = calAttenuation(distance(mypos, ptlightcolor[i]));
-            fragColor += attn * col;
+            if (lightVisility(mypos, position, true)){
+                col = ComputeLight(direction, lights[i]->color, normal, half1, diffuse, specular, shininess) ;
+                float attn = calAttenuation(distance(mypos, lights[i]->color));
+                fragColor += attn * col;
+            }
         }
     }
 

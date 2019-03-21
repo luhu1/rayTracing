@@ -20,6 +20,7 @@ typedef glm::mat4 mat4 ;
 #include "variables.h"
 #include "ray.hpp"
 #include "object.hpp"
+#include "light.hpp"
 #include "Transform.h"
 
 void matransform (std::stack<mat4> &transfstack, float * values) ;

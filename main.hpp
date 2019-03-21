@@ -17,35 +17,27 @@ typedef glm::mat4 mat4 ;
 #include "Transform.h"
 #include "readfile.h"
 #include "object.hpp"
+#include "light.hpp"
 #include "ray.hpp"
 #include "display.hpp"
 
- vec3 eye ;
- vec3 up ;
- vec3 center ;
- int maxdepth;
- int width, height ;
- float fovy ;
- std::string output;
- vec3 attenuation;
+vec3 eye ;
+vec3 up ;
+vec3 center ;
+int maxdepth;
+int width, height ;
+float fovy ;
+std::string output;
 
-// Materials (read from file)
- vec3 ambient ;
- vec3 diffuse ;
- vec3 specular ;
- vec3 emission ;
- float shininess ;
+mat4 projection, modelview; // The mvp matrices
 
- mat4 projection, modelview; // The mvp matrices
-
- std::vector <vec3> dirlightposn; // Directional Light Positions
- std::vector <vec3> dirlightcolor; // Directional Light Colors
- std::vector <vec3> dirlightransf; // Directional Lights transformed by modelview
-
- std::vector <vec3> ptlightposn; // Point Light Positions
- std::vector <vec3> ptlightcolor; // Point Light Colors
- std::vector <vec3> ptlightransf; // Point Lights transformed by modelview
-
+vec3 ambient;
+vec3 diffuse;
+vec3 specular;
+vec3 emission;
+vec3 attenuation;
+float shininess;
+std::vector <Light*> lights;
 
  int maxverts;
  std::vector <vec3> vertices;

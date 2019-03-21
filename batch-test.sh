@@ -1,4 +1,3 @@
-#!bin/bash
 ./transforms testscenes/scene1.test
 ./transforms testscenes/scene2.test
 ./transforms testscenes/scene3.test

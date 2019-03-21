@@ -30,6 +30,8 @@ void init(){
 void destroy(){
     for(int i=0; i<objects.size(); i++)
         free(objects[i]);
+    for(int i=0; i<lights.size(); i++)
+        free(lights[i]);
 }
 
 

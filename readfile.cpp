@@ -64,8 +64,15 @@ void readfile(const char* filename)
         if (cmd == "directional") {
             validinput = readvals(s, 6, values);
             if (validinput){
-                dirlightposn.push_back(vec3(values[0], values[1], values[2]));
-                dirlightcolor.push_back(vec3(values[3], values[4], values[5]));
+                Light *light = new Light();
+                light->typeName = directionalType;
+                light->pos = vec3(values[0], values[1], values[2]);
+                light->color = vec3(values[3], values[4], values[5]);
+
+                light->diffuse = vec3(diffuse);
+                light->specular = vec3(diffuse);
+                light->shininess = shininess;
+                lights.push_back(light);
 
             }
         }
@@ -73,19 +80,23 @@ void readfile(const char* filename)
         else if (cmd == "point") {
             validinput = readvals(s, 6, values);
             if (validinput){
-                ptlightposn.push_back(vec3(values[0], values[1], values[2]));
-                ptlightcolor.push_back(vec3(values[3], values[4], values[5]));
+                Light *light = new Light();
+                light->typeName = pointType;
+                light->pos = vec3(values[0], values[1], values[2]);
+                light->color = vec3(values[3], values[4], values[5]);
+
+                light->diffuse = vec3(diffuse);
+                light->specular = vec3(diffuse);
+                light->shininess = shininess;
+                lights.push_back(light);
             }
         }
 
         // Material Commands
         // Ambient, diffuse, specular, shininess properties for each object.
-        // Filling this in is pretty straightforward, so I've left it in
-        // the skeleton, also as a hint of how to do the more complex ones.
-        // Note that no transforms/stacks are applied to the colors.
 
         else if (cmd == "ambient") {
-          validinput = readvals(s, 3, values); // colors
+          validinput = readvals(s, 3, values);
           if (validinput) {
               ambient = vec3(values[0], values[1], values[2]);
           }
@@ -166,7 +177,6 @@ void readfile(const char* filename)
           }
         }
 
-        // I include the basic push/pop code for matrix stacks
         else if (cmd == "pushTransform") {
           transfstack.push(transfstack.top());
         } else if (cmd == "popTransform") {
@@ -227,12 +237,11 @@ void readfile(const char* filename)
                 tri->v2 = vec3(vertices[(int)values[1]]);
                 tri->v3 = vec3(vertices[(int)values[2]]);
 
-                // Set the object's light properties
                 tri->ambient = vec3(ambient);
+                tri->emission = vec3(emission);
                 tri->diffuse = vec3(diffuse);
                 tri->specular = vec3(specular);
-                tri->emission = vec3(emission);
-                tri->shininess = float(shininess);
+                tri->shininess = shininess;
 
                 tri->transform = transfstack.top();
                 vectransform(tri->v1, tri->transform);
@@ -251,10 +260,10 @@ void readfile(const char* filename)
             s->radius = values[3];
 
             s->ambient = vec3(ambient);
+            s->emission = vec3(emission);
             s->diffuse = vec3(diffuse);
             s->specular = vec3(specular);
-            s->emission = vec3(emission);
-            s->shininess = float(shininess);
+            s->shininess = shininess;
 
             s->transform = transfstack.top();
             objects.push_back(s);
