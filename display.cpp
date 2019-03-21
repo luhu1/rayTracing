@@ -24,21 +24,19 @@ float calAttenuation(float dist){
 vec3 calColor(Hit *hit){
     vec3 normal = hit->normal;
     vec3 mypos = hit->p;
+
     vec3 ambient = hit->obj->ambient;
     vec3 emission = hit->obj->emission;
+    vec3 diffuse = hit->obj->diffuse;
+    vec3 specular = hit->obj-> specular;
     float shininess = hit->obj->shininess;
-
-    vec3 diffuse, specular, col;
-    diffuse = hit->obj->diffuse;
-    specular = hit->obj-> specular;
 
     vec3 fragColor = ambient + emission;
     vec3 eyedirn = normalize(eye - mypos) ;
-    // cout << glm::to_string(ambient) << endl;
+
+    vec3 col;
 
     for (int i=0; i<lights.size(); i++){
-        // diffuse = lights[i]->diffuse;
-        // specular = lights[i]-> specular;
 
         // Directional lights
         if (lights[i]->typeName == directionalType){
@@ -53,8 +51,7 @@ vec3 calColor(Hit *hit){
 
         // Point lights
         else if (lights[i]->typeName == pointType){
-            vec3 position = lights[i]->pos;
-            vec3 direction = normalize (position - mypos) ;
+            vec3 direction = normalize (lights[i]->pos - mypos) ;
             vec3 half1 = normalize (direction + eyedirn) ;
 
             if (lightVisibility(mypos, lights[i])){

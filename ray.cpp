@@ -22,7 +22,7 @@ int lightVisibility(vec3 pos, Light *light){
         dir = glm::normalize(light->pos - pos);
     }
     else if (light->typeName == directionalType){
-        dir = glm::normalize(-(light->pos));
+        dir = glm::normalize(light->pos);
     }
     else{
         return 0;
