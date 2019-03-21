@@ -17,7 +17,7 @@ void init(){
     width = 500, height = 500 ; // window width and height
     fovy = 90.0f; // For field of view
     output = "output.png";
-    epsilon = 0.01f;
+    epsilon = 0.0001f;
     attenuation = vec3(1.0f, 0.0f, 0.0f);
 
     // Materials
@@ -50,16 +50,20 @@ vec3 recRayTracing(Ray ray, int depth){
     vec3 dir = calReflection(ray.p1, hit->normal);
     vec3 p0 = hit->p + dir * epsilon;  // avoid numerical inaccuracy
     Ray ray2 = Ray(p0, dir);
-    return color + hit->obj->specular * recRayTracing(ray2, depth+1);
+    color += hit->obj->specular * recRayTracing(ray2, depth+1);
+
+    for (int i=0; i<3; i++)
+        color[i] = color[i] > 1? 1.0f: color[i];    // trim invalid output
+    return color;
 }
 
 
 void saveScreenshot(string fname, vec3 *pix) {
   BYTE *pixels = new BYTE[3*width*height];
   for(int i=0; i<width*height; i++){
-      pixels[i*3] = (int)(pix[i].z * 255);
-      pixels[i*3+1] = (int)(pix[i].y * 255);
-      pixels[i*3+2] = (int)(pix[i].x * 255);
+      pixels[i*3] = (int)(pix[i].z * 255.99);
+      pixels[i*3+1] = (int)(pix[i].y * 255.99);
+      pixels[i*3+2] = (int)(pix[i].x * 255.99);
   }
 
   FIBITMAP *img = FreeImage_ConvertFromRawBits(pixels, width, height, width * 3, 24, 0xFF0000, 0x00FF00, 0x0000FF, false);
