@@ -14,18 +14,22 @@ vec3 vectransform3(vec3 point, mat4 M){
 }
 
 
-int lightVisility(vec3 pos, vec3 lightpos, bool isPtLight){
+int lightVisility(vec3 pos, Light *light){
     std::vector <Hit*> hitList;
     vec3 dir;
 
-    if (isPtLight){
-        dir = lightpos - pos;
+    if (light->typeName == pointType){
+        dir = glm::normalize(light->pos - pos);
+    }
+    else if (light->typeName == directionalType){
+        dir = glm::normalize(-(light->pos));
     }
     else{
-        dir = glm::normalize(-lightpos);
+        return 0;
     }
-    Ray ray = Ray(pos, dir);
 
+    vec3 p0 = pos + dir * epsilon;  // avoid numerical inaccuracy
+    Ray ray = Ray(p0, dir);
 
 
     for (int i=0; i<objects.size(); i++){
@@ -36,12 +40,19 @@ int lightVisility(vec3 pos, vec3 lightpos, bool isPtLight){
             TriangleIntersection(ray, (Triangle*)objects[i], hitList);
         }
     }
-    for (auto it=hitList.begin(); it!=hitList.end(); it++){
-        if (isPtLight && (*it)->t > 1)
+
+    for (int i=0; i<hitList.size(); i++){
+        if(light->typeName == directionalType){
             return 0;
-        else if (!isPtLight && (*it)->t > 0)
-            return 0;
+        }
+        else if (light->typeName == pointType){
+            float dist1 = glm::distance(pos, hitList[i]->p);
+            float dist2 = glm::distance(pos, light->pos);
+            if (dist1 < dist2)
+                return 0;
+        }
     }
+
     return 1;
 }
 

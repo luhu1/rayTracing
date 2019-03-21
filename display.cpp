@@ -45,7 +45,7 @@ vec3 calColor(Hit *hit){
             vec3 direction = normalize (lights[i]->pos) ;
             vec3 half1 = normalize (direction + eyedirn) ;
 
-            if (lightVisility(mypos, direction, false)){
+            if (lightVisility(mypos, lights[i])){
                 col = ComputeLight(direction, lights[i]->color, normal, half1, diffuse, specular, shininess) ;
                 fragColor += col;
             }
@@ -57,7 +57,7 @@ vec3 calColor(Hit *hit){
             vec3 direction = normalize (position - mypos) ;
             vec3 half1 = normalize (direction + eyedirn) ;
 
-            if (lightVisility(mypos, position, true)){
+            if (lightVisility(mypos, lights[i])){
                 col = ComputeLight(direction, lights[i]->color, normal, half1, diffuse, specular, shininess) ;
                 float attn = calAttenuation(distance(mypos, lights[i]->color));
                 fragColor += attn * col;
