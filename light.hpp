@@ -10,13 +10,9 @@ enum lightType {directionalType, pointType};
 
 struct Light {
     lightType typeName;
-    vec3 pos;   // or direction
+    vec3 pos;
     vec3 transf;
     vec3 color;
-
-    vec3 diffuse;
-    vec3 specular;
-    float shininess;
 };
 typedef struct Light Light;
 

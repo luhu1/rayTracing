@@ -17,6 +17,7 @@ extern int width, height ;
 extern float fovy ;
 extern std::string output;
 extern float epsilon;
+extern float epsilon2;
 
 extern vec3 ambient;
 extern vec3 diffuse;

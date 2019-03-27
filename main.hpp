@@ -29,6 +29,7 @@ int width, height ;
 float fovy ;
 std::string output;
 float epsilon;
+float epsilon2;
 
 mat4 projection, modelview; // The mvp matrices
 

@@ -13,11 +13,12 @@ void init(){
     eye = vec3(0.0,0.0,5.0);
     up = vec3(0.0,1.0,0.0);
     center = vec3(0.0,0.0,0.0);
-    maxdepth = 1;
+    maxdepth = 5;
     width = 500, height = 500 ; // window width and height
     fovy = 90.0f; // For field of view
     output = "output.png";
-    epsilon = 0.0001f;
+    epsilon = 0.01f;
+    epsilon2 = 0.0001;
     attenuation = vec3(1.0f, 0.0f, 0.0f);
 
     // Materials

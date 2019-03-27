@@ -59,7 +59,6 @@ void readfile(const char* filename)
         // Up to 10 params for cameras.
         bool validinput; // Validity of input
 
-        // Process the light, add it to database.
         // Lighting Command
         if (cmd == "directional") {
             validinput = readvals(s, 6, values);
@@ -68,10 +67,6 @@ void readfile(const char* filename)
                 light->typeName = directionalType;
                 light->pos = vec3(values[0], values[1], values[2]);
                 light->color = vec3(values[3], values[4], values[5]);
-
-                light->diffuse = vec3(diffuse);
-                light->specular = vec3(diffuse);
-                light->shininess = shininess;
                 lights.push_back(light);
 
             }
@@ -84,10 +79,6 @@ void readfile(const char* filename)
                 light->typeName = pointType;
                 light->pos = vec3(values[0], values[1], values[2]);
                 light->color = vec3(values[3], values[4], values[5]);
-
-                light->diffuse = vec3(diffuse);
-                light->specular = vec3(diffuse);
-                light->shininess = shininess;
                 lights.push_back(light);
             }
         }
