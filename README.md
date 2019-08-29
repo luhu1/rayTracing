@@ -6,7 +6,7 @@ cd rayTracing
 make
 ./transforms (your-test-scenes)
 ```
-I list my test scenes in testscenes folder.
+Sample test scenes are listed in `testscenes` folder.
 
 ## Example Scenes
 #### All lighting scene
