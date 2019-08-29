@@ -6,9 +6,14 @@ cd rayTracing
 make
 ./transforms (your-test-scenes)
 ```
-I list my test scenes in /testscenes folder.
+I list my test scenes in testscenes folder.
 
 ## Example Scenes
-![/testscenes/scene6.png](scene6)
-![/testscenes/scene4-diffuse.png](scene4-diffuse)
-![/testscenes/scene4-specular.png](scene4-specular)
+#### All lighting scene
+![scene6](testscenes/scene6.png)
+
+#### Diffuse lighting scene
+![scene4-diffuse](testscenes/scene4-diffuse.png)
+
+#### Specular lighting scene
+![scene4-specular](testscenes/scene4-specular.png)
