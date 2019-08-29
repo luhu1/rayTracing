@@ -9,6 +9,6 @@ make
 I list my test scenes in /testscenes folder.
 
 ## Example Scenes
-![scene6.png](scene6)
-![scene4-diffuse.png](scene4-diffuse)
-![scene4-specular.png](scene4-specular)
+![/testscenes/scene6.png](scene6)
+![/testscenes/scene4-diffuse.png](scene4-diffuse)
+![/testscenes/scene4-specular.png](scene4-specular)
